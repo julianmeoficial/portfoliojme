@@ -80,7 +80,6 @@ src/
 
 **Producción:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app) (Vercel, conectado al repo `portfoliojme`).
 
-
 ### Flujo local → producción
 
 ```bash
@@ -107,4 +106,4 @@ npm run start    # prueba el build en http://localhost:3000
 
 ## Licencia
 
-Proyecto personal — todos los derechos reservados.
+Proyecto personal — todos los derechos reservados...

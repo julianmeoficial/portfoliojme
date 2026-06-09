@@ -91,7 +91,7 @@ export const en: Translations = {
         info_availability_label: 'Availability',
         info_availability_value: 'Open to junior, freelance, and remote roles. Frontend, Full-Stack, UI/UX, Scrum Master',
         info_languages_label: 'Languages',
-        info_languages_value: 'Spanish (native) · English (A2+)',
+        info_languages_value: 'Spanish (native) · English (B1+)',
     },
     footer: {
         built_with: 'Built with Next.js, TypeScript & GSAP',
