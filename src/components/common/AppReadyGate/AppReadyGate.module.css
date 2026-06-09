@@ -1,0 +1,35 @@
+.gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg);
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+.gateDone {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.logo {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--color-text);
+    animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gate { transition: none; }
+    .logo { animation: none; opacity: 1; }
+}

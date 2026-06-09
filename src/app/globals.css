@@ -1,49 +1,221 @@
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800,900&f[]=satoshi@300,400,500,700&display=swap');
+
+/* ─────────────────────────────────────────────────────────
+   FONTS + FLUID TYPE SCALE + SPACING + RADIUS + EASING
+───────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Fonts */
+  --font-display: 'Cabinet Grotesk', 'Helvetica Neue', sans-serif;
+  --font-body:    'Satoshi', 'Helvetica Neue', sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Fluid type scale */
+  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+  --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+  --text-3xl:  clamp(2.5rem,   1rem    + 4vw,    5rem);
+  --text-hero: clamp(3.5rem,   1rem    + 7vw,    9rem);
+
+  /* 4px spacing system */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Border radius */
+  --radius-xs:   0.125rem;
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.875rem;
+  --radius-xl:   1.25rem;
+  --radius-2xl:  1.75rem;
+  --radius-3xl:  2.5rem;
+  --radius-full: 9999px;
+
+  /* Easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth:   cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-fast:  160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base:  280ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow:  480ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Content widths */
+  --content-narrow:  640px;
+  --content-default: 960px;
+  --content-wide:    1280px;
+  --content-max:     1440px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ═══════════════════════════════════════════════════════
+   DARK MODE — DEFAULT
+═══════════════════════════════════════════════════════ */
+:root, [data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --color-bg:             #0a0a0b;
+  --color-surface:        #121214;
+  --color-surface-2:      #18181b;
+  --color-surface-offset: #1f1f23;
+  --color-surface-hover:  #27272c;
+  --color-divider:        #2a2a30;
+  --color-border:         #33333a;
+
+  /* Text - ¡Corregido para legibilidad perfecta! */
+  --color-text:           #f4f2ec;
+  --color-text-secondary: #b5b2ac; /* Más claro */
+  --color-text-muted:     #8a8782; /* Antes era muy oscuro */
+  --color-text-faint:     #52504c;
+  --color-text-inverse:   #0a0a0b;
+
+  --color-primary:        #e6ddd0;
+  --color-primary-active: #cec4b5;
+
+  /* Liquid Glass Dark */
+  --glass-bg:           rgba(25, 25, 28, 0.3); /* Base semitransparente oscura */
+  --glass-bg-strong:    rgba(15, 15, 17, 0.75); /* Scroll: Oscuro y denso */
+  --glass-border:       rgba(255, 255, 255, 0.08);
+  --glass-specular:     inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --glass-blur:         blur(24px) saturate(180%);
+
+  /* Neumorphism */
+  --neu-shadow:         0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --neu-shadow-hover:   0 12px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+  --glow-btn:  0 8px 32px rgba(0,0,0,0.5);
+  --glow-accent: 0 0 24px rgba(230, 221, 208, 0.15);
+
+  --glass-bg-hover: rgba(35, 35, 40, 0.45);
+  --glass-border-hover: rgba(255, 255, 255, 0.14);
+
+  --overlay-scrim: rgba(0, 0, 0, 0.55);
+  --overlay-scrim-strong: rgba(0, 0, 0, 0.85);
+  --overlay-text: rgba(255, 255, 255, 0.9);
+  --overlay-control-bg: rgba(255, 255, 255, 0.12);
+  --overlay-control-border: rgba(255, 255, 255, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════
+   LIGHT MODE
+═══════════════════════════════════════════════════════ */
+[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg:             #f7f5f1;
+  --color-surface:        #ffffff;
+  --color-surface-2:      #f0ede6;
+  --color-surface-offset: #e8e4db;
+  --color-surface-hover:  #dfdbd0;
+  --color-divider:        #d4d0c5;
+  --color-border:         #c7c2b5;
+
+  --color-text:           #18160f;
+  --color-text-secondary: #4a4742;
+  --color-text-muted:     #6e6b64;
+  --color-text-faint:     #a3a099;
+  --color-text-inverse:   #f7f5f1;
+
+  --color-primary:        #1e1b14;
+  --color-primary-active: #362f24;
+
+  /* Liquid Glass Light */
+  --glass-bg:           rgba(255, 255, 255, 0.5);
+  --glass-bg-strong:    rgba(255, 255, 255, 0.85);
+  --glass-border:       rgba(0, 0, 0, 0.06);
+  --glass-specular:     inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --glass-blur:         blur(24px) saturate(180%);
+
+  /* Neumorphism Light */
+  --neu-shadow:         0 8px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+  --neu-shadow-hover:   0 12px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1);
+
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+  --glow-btn:  0 6px 20px rgba(0,0,0,0.1);
+  --glow-accent: 0 0 24px rgba(30, 27, 20, 0.12);
+
+  --glass-bg-hover: rgba(255, 255, 255, 0.65);
+  --glass-border-hover: rgba(0, 0, 0, 0.1);
+
+  --overlay-scrim: rgba(0, 0, 0, 0.45);
+  --overlay-scrim-strong: rgba(0, 0, 0, 0.8);
+  --overlay-text: rgba(255, 255, 255, 0.95);
+  --overlay-control-bg: rgba(0, 0, 0, 0.08);
+  --overlay-control-border: rgba(0, 0, 0, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BASE RESET
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
-html,
 body {
-  max-width: 100vw;
+  min-height: 100dvh;
+  line-height: 1.6;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
   overflow-x: hidden;
 }
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; background: none; border: none; font: inherit; }
+ul { list-style: none; }
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+/* Glass Global Class */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-specular);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Loading utilities */
+.is-loading {
+  pointer-events: none;
+  cursor: wait;
 }
 
-@media (prefers-color-scheme: dark) {
+@keyframes shimmer-global {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
   html {
-    color-scheme: dark;
+    scroll-behavior: auto;
   }
 }

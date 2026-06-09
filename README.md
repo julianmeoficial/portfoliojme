@@ -26,8 +26,8 @@ Portfolio personal de **Julián Martínez Espitia**, desarrollador frontend y fu
 ## Quick Start
 
 ```bash
-git clone https://github.com/julianmeoficial/portfolio.git
-cd portfolio
+git clone https://github.com/julianmeoficial/portfoliojme.git
+cd portfoliojme
 npm install
 npm run dev
 ```
@@ -78,10 +78,29 @@ src/
 
 ## Deploy
 
-Desplegado en Vercel. Para deploy manual:
+**Producción:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app) (Vercel, conectado al repo `portfoliojme`).
+
+### Primer deploy en Vercel
+
+1. Sube el código a `main` en GitHub (`git push origin main`).
+2. En [vercel.com](https://vercel.com) → **Add New Project** → importa `julianmeoficial/portfoliojme`.
+3. Framework: **Next.js** (auto-detectado). Build: `npm run build`. Sin variables de entorno por ahora.
+4. Deploy. Cada push a `main` vuelve a desplegar automáticamente.
+
+### Flujo local → producción
+
+```bash
+npm run dev      # desarrollo en Mac (no afecta producción)
+npm run lint     # verificar antes de subir
+npm run build    # simula el build de Vercel
+git add … && git commit -m "…" && git push origin main
+```
+
+### Build manual local
 
 ```bash
 npm run build
+npm run start    # prueba el build en http://localhost:3000
 ```
 
 ## Autor
@@ -95,4 +114,3 @@ npm run build
 ## Licencia
 
 Proyecto personal — todos los derechos reservados.
-# portfoliojme
