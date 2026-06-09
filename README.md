@@ -80,12 +80,6 @@ src/
 
 **Producción:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app) (Vercel, conectado al repo `portfoliojme`).
 
-### Primer deploy en Vercel
-
-1. Sube el código a `main` en GitHub (`git push origin main`).
-2. En [vercel.com](https://vercel.com) → **Add New Project** → importa `julianmeoficial/portfoliojme`.
-3. Framework: **Next.js** (auto-detectado). Build: `npm run build`. Sin variables de entorno por ahora.
-4. Deploy. Cada push a `main` vuelve a desplegar automáticamente.
 
 ### Flujo local → producción
 
