@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Julián Martínez Espitia
 
-## Getting Started
+Portfolio personal de **Julián Martínez Espitia**, desarrollador frontend y full-stack. Landing single-page con animaciones GSAP, diseño liquid glass, temas dark/light e internacionalización ES/EN.
 
-First, run the development server:
+**Live:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app)
+
+## Stack
+
+| Capa | Tecnología |
+| ---- | ---------- |
+| Framework | Next.js 16 (App Router) |
+| UI | React 19, TypeScript, CSS Modules |
+| Motion | GSAP 3 + ScrollTrigger + `@gsap/react` |
+| Iconos | Heroicons |
+| i18n | React Context (ES / EN) |
+| Deploy | Vercel |
+
+## Proyectos destacados
+
+| Proyecto | Descripción | Repositorio |
+| -------- | ----------- | ----------- |
+| **SkyVault** | Catálogo y comparador de aeronaves comerciales con WebSocket y panel de moderación | [skyvault](https://github.com/julianmeoficial/skyvault) |
+| **SelanFlow** | Tareas + Pomodoro + simulador FIFO/RR con Gantt y métricas en tiempo real | [SelanFlow](https://github.com/julianmeoficial/SelanFlow) |
+| **SkyGate** | Gestión automatizada de gates aeroportuarios con DFA y monitoreo en tiempo real | [SkyGate](https://github.com/julianmeoficial/SkyGate) |
+
+## Quick Start
 
 ```bash
+git clone https://github.com/julianmeoficial/portfolio.git
+cd portfolio
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando | Descripción |
+| ------- | ----------- |
+| `npm run dev` | Desarrollo |
+| `npm run build` | Build de producción |
+| `npm run start` | Servidor de producción |
+| `npm run lint` | ESLint |
 
-## Learn More
+## Estructura
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/              # Layout, página principal, globals.css
+├── components/
+│   ├── common/       # Navbar, Footer, Skeleton, Spinner
+│   └── sections/     # Hero, About, Projects, Skills, Contact
+├── data/projects.ts  # Datos de proyectos
+└── lib/i18n/         # Traducciones y contexto de idioma
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentación
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Documento | Contenido |
+| --------- | --------- |
+| [docs/README.md](docs/README.md) | Índice de documentación |
+| [docs/DESIGN.md](docs/DESIGN.md) | Sistema visual y tokens |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitectura técnica |
+| [docs/I18N.md](docs/I18N.md) | Guía de internacionalización |
+| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Convenciones y contribución |
+| [AGENTS.md](AGENTS.md) | Reglas para agentes IA |
 
-## Deploy on Vercel
+## Características
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Secciones animadas con GSAP y ScrollTrigger
+- Modal de preview de proyectos con galería y skeleton de carga (SkyGate solo GitHub)
+- Tema automático por hora local (light 07:00–19:00) con override manual vía botón sol/luna
+- Idioma por defecto inglés; banner de sugerencia ES en regiones hispanohablantes
+- Selector de idioma ES/EN en navbar
+- Diseño responsive con liquid glass y neumorfismo
+- Accesibilidad: focus trap en modales, `prefers-reduced-motion`, landmarks ARIA
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy
+
+Desplegado en Vercel. Para deploy manual:
+
+```bash
+npm run build
+```
+
+## Autor
+
+**Julián Martínez Espitia** — Ingeniería de Software, Universidad de Cartagena
+
+- GitHub: [@julianmeoficial](https://github.com/julianmeoficial)
+- LinkedIn: [julianmeoficial](https://linkedin.com/in/julianmeoficial)
+- Email: julianmeoficial@outlook.com
+
+## Licencia
+
+Proyecto personal — todos los derechos reservados.
+# portfoliojme
