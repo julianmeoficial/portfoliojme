@@ -1,35 +1,35 @@
-# Arquitectura — Portfolio JME
+# Architecture — Portfolio JME
 
-Portfolio personal single-page construido con **Next.js 16** (App Router), **React 19**, **TypeScript** y **GSAP**.
+Single-page personal portfolio built with **Next.js 16** (App Router), **React 19**, **TypeScript**, and **GSAP**.
 
-## Estructura del repositorio
+## Repository structure
 
 ```
 portfolio/
 ├── public/
-│   └── screenshots/          # Capturas de proyectos (.webp o .png)
-├── docs/                       # Documentación técnica
+│   └── screenshots/          # Project screenshots (.webp or .png)
+├── docs/                       # Technical documentation
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx          # Root layout, metadata, providers
-│   │   ├── page.tsx            # Home (secciones)
-│   │   ├── loading.tsx         # Loading UI de ruta
-│   │   └── globals.css         # Tokens y reset global
+│   │   ├── page.tsx            # Home (sections)
+│   │   ├── loading.tsx         # Route loading UI
+│   │   └── globals.css         # Tokens and global reset
 │   ├── components/
 │   │   ├── common/             # Navbar, Footer, loading primitives
 │   │   └── sections/           # Hero, About, Projects, Skills, Contact
 │   ├── data/
-│   │   └── projects.ts         # Datos estáticos de proyectos
+│   │   └── projects.ts         # Static project data
 │   ├── lib/
-│   │   ├── i18n/               # Context + traducciones ES/EN + localeUtils
+│   │   ├── i18n/               # Context + ES/EN translations + localeUtils
 │   │   ├── theme/              # themeUtils + useTheme (auto/manual)
 │   │   ├── hooks/              # useFocusTrap, useModalLock
 │   │   └── motion/             # prefersReducedMotion
 │   └── types/
-└── AGENTS.md                   # Reglas para agentes IA
+└── AGENTS.md                   # AI agent rules
 ```
 
-## Flujo de renderizado
+## Rendering flow
 
 ```mermaid
 flowchart TD
@@ -57,25 +57,25 @@ flowchart TD
     page --> footer
 ```
 
-## Capas
+## Layers
 
-| Capa | Responsabilidad |
-| ---- | --------------- |
-| `app/` | Routing, metadata SEO, layout global |
-| `components/sections/` | Secciones de la landing (client components con GSAP) |
-| `components/common/` | UI compartida (navbar, footer, skeleton, spinner) |
-| `data/` | Contenido estático tipado (proyectos) |
-| `lib/i18n/` | Internacionalización vía React Context |
+| Layer | Responsibility |
+| ----- | -------------- |
+| `app/` | Routing, SEO metadata, global layout |
+| `components/sections/` | Landing sections (client components with GSAP) |
+| `components/common/` | Shared UI (navbar, footer, skeleton, spinner) |
+| `data/` | Typed static content (projects) |
+| `lib/i18n/` | Internationalisation via React Context |
 
-## Internacionalización
+## Internationalisation
 
 - Context: [`LanguageContext.tsx`](../src/lib/i18n/LanguageContext.tsx)
-- Traducciones: `es.ts` + `en.ts` (misma interfaz `Translations`)
-- Detección región ES: [`localeUtils.ts`](../src/lib/i18n/localeUtils.ts)
-- Banner sugerencia: [`LanguagePrompt.tsx`](../src/components/common/LanguagePrompt/LanguagePrompt.tsx)
-- Default primera visita: **inglés** (`portfolio-lang` ausente)
-- Persistencia: `portfolio-lang`, `portfolio-lang-prompt-dismissed`
-- Script inline en layout sincroniza `lang` en `<html>` antes del paint
+- Translations: `es.ts` + `en.ts` (shared `Translations` interface)
+- Spanish region detection: [`localeUtils.ts`](../src/lib/i18n/localeUtils.ts)
+- Suggestion banner: [`LanguagePrompt.tsx`](../src/components/common/LanguagePrompt/LanguagePrompt.tsx)
+- First visit default: **English** (`portfolio-lang` absent)
+- Persistence: `portfolio-lang`, `portfolio-lang-prompt-dismissed`
+- Inline script in layout syncs `lang` on `<html>` before paint
 
 ```mermaid
 flowchart TD
@@ -88,31 +88,37 @@ flowchart TD
     toggle[Navbar LanguageSwitch] --> persistLang[portfolio-lang]
 ```
 
-## Datos de proyectos
+## Project data
 
-[`projects.ts`](../src/data/projects.ts) exporta un array tipado `Project[]`:
+[`projects.ts`](../src/data/projects.ts) exports a typed `Project[]` array:
 
 - `id`, `title`, `description` (Record ES/EN), `stack`, `githubUrl`, `screenshots`, `color`
-- El modal de preview lee screenshots y descripción según idioma activo
+- The preview modal reads screenshots and description according to the active language
+- Screenshots in `public/screenshots/` named `{id}-{n}.webp` or `{id}-{n}.png` (both formats supported)
+- Gallery: `object-fit: contain` + letterbox; lightbox with internal controls; click on slide expands
+
+## Skills
+
+[`Skills.tsx`](../src/components/sections/Skills/Skills.tsx) defines `SKILL_CATEGORIES` (literal chips, not i18n). Categories: `languages`, `frontend`, `backend`, `tools`. Category labels via `t.skills.categories.*`. Source of truth for the stack: Tech Stack section of the author's GitHub README.
 
 ## GSAP
 
-- Plugin: `@gsap/react` (`useGSAP`) con scope por sección
-- `ScrollTrigger` para animaciones al entrar en viewport
-- Registro de plugins en cada componente que los usa (`typeof window !== 'undefined'`)
-- Cleanup automático vía `useGSAP` context
+- Plugin: `@gsap/react` (`useGSAP`) with scope per section
+- `ScrollTrigger` for viewport entry animations
+- Plugin registration in each component that uses them (`typeof window !== 'undefined'`)
+- Automatic cleanup via `useGSAP` context
 
-## Temas
+## Themes
 
-- Auto por defecto: **light** 07:00–19:00, **dark** resto (hora local del navegador)
-- Toggle en Navbar → modo `manual` + `data-theme` en `<html>`
-- Utilidades: [`themeUtils.ts`](../src/lib/theme/themeUtils.ts), hook [`useTheme.ts`](../src/lib/theme/useTheme.ts)
-- Persistencia: `portfolio-theme-mode` (`auto` \| `manual`), `portfolio-theme` (`light` \| `dark`)
-- Script inline en layout replica la lógica antes del paint
-- En modo `auto`, `useTheme` recalcula cada 60s al cruzar día/noche
+- Auto by default: **light** 07:00–19:00, **dark** otherwise (browser local time)
+- Navbar toggle → `manual` mode + `data-theme` on `<html>`
+- Utilities: [`themeUtils.ts`](../src/lib/theme/themeUtils.ts), hook [`useTheme.ts`](../src/lib/theme/useTheme.ts)
+- Persistence: `portfolio-theme-mode` (`auto` \| `manual`), `portfolio-theme` (`light` \| `dark`)
+- Inline script in layout replicates logic before paint
+- In `auto` mode, `useTheme` recalculates every 60s when crossing day/night
 
 ## Deploy
 
 - Target: [Vercel](https://vercel.com)
-- URL producción: `https://julianmeoficial.vercel.app`
-- Build: `npm run build` → output estático/SSR según configuración Next.js
+- Production URL: `https://julianmeoficial.vercel.app`
+- Build: `npm run build` → static/SSR output per Next.js configuration

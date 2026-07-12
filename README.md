@@ -1,32 +1,32 @@
 # Portfolio — Julián Martínez Espitia
 
-Portfolio personal de **Julián Martínez Espitia**, desarrollador frontend y full-stack. Landing single-page con animaciones GSAP, diseño liquid glass, temas dark/light e internacionalización ES/EN.
+Personal portfolio for **Julián Martínez Espitia**, frontend and full-stack developer. Single-page landing with GSAP animations, liquid glass design, dark/light themes, and Spanish/English internationalisation.
 
 **Live:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app)
 
 ## Stack
 
-| Capa | Tecnología |
-| ---- | ---------- |
+| Layer | Technology |
+| ----- | ---------- |
 | Framework | Next.js 16 (App Router) |
 | UI | React 19, TypeScript, CSS Modules |
 | Motion | GSAP 3 + ScrollTrigger + `@gsap/react` |
-| Iconos | Heroicons |
+| Icons | Heroicons |
 | i18n | React Context (ES / EN) |
 | Deploy | Vercel |
 
-## Proyectos destacados
+## Featured projects
 
-| Proyecto | Descripción | Repositorio |
-| -------- | ----------- | ----------- |
-| **SkyVault** | Catálogo y comparador de aeronaves comerciales con WebSocket y panel de moderación | [skyvault](https://github.com/julianmeoficial/skyvault) |
-| **SelanFlow** | Tareas + Pomodoro + simulador FIFO/RR con Gantt y métricas en tiempo real | [SelanFlow](https://github.com/julianmeoficial/SelanFlow) |
-| **SkyGate** | Gestión automatizada de gates aeroportuarios con DFA y monitoreo en tiempo real | [SkyGate](https://github.com/julianmeoficial/SkyGate) |
-| **ODC Simulator** | Simulador de CPU en Java 21 con caché HIT/MISS y comparativa UMA vs segmentada | [odc-simulator](https://github.com/julianmeoficial/odc-simulator) |
-| **RLC Lab** | Simulador interactivo de circuito RLC en AC con EDO, RK4 y casos industriales | [rlc-lab](https://github.com/julianmeoficial/rlc-lab) |
-| **Zoro Security** | Case study de MCP server para seguridad y observabilidad (BrevKu) | [BK-OPS-Security-Case-Study](https://github.com/julianmeoficial/BK-OPS-Security-Case-Study) |
+| Project | Description | Repository |
+| ------- | ----------- | ---------- |
+| **SkyVault** | Interactive commercial aircraft catalogue with WebSocket and moderation panel | [skyvault](https://github.com/julianmeoficial/skyvault) |
+| **SelanFlow** | Tasks + Pomodoro + FIFO/RR scheduler with Gantt and live metrics | [SelanFlow](https://github.com/julianmeoficial/SelanFlow) |
+| **SkyGate** | Automated airport gate management with DFA and real-time monitoring | [SkyGate](https://github.com/julianmeoficial/SkyGate) |
+| **ODC Simulator** | Java 21 CPU simulator with cache HIT/MISS and UMA vs segmented memory comparison | [odc-simulator](https://github.com/julianmeoficial/odc-simulator) |
+| **RLC Lab** | Interactive series RLC circuit simulator in AC with ODE, RK4, and industrial cases | [rlc-lab](https://github.com/julianmeoficial/rlc-lab) |
+| **Zoro Security** | MCP server case study for security and observability (BrevKu) | [BK-OPS-Security-Case-Study](https://github.com/julianmeoficial/BK-OPS-Security-Case-Study) |
 
-## Quick Start
+## Quick start
 
 ```bash
 git clone https://github.com/julianmeoficial/portfoliojme.git
@@ -35,78 +35,78 @@ npm install
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).
 
 ### Scripts
 
-| Comando | Descripción |
+| Command | Description |
 | ------- | ----------- |
-| `npm run dev` | Desarrollo |
-| `npm run build` | Build de producción |
-| `npm run start` | Servidor de producción |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Production server |
 | `npm run lint` | ESLint |
 
-## Estructura
+## Structure
 
 ```
 src/
-├── app/              # Layout, página principal, globals.css
+├── app/              # Layout, main page, globals.css
 ├── components/
 │   ├── common/       # Navbar, Footer, Skeleton, Spinner
 │   └── sections/     # Hero, About, Projects, Skills, Contact
-├── data/projects.ts  # Datos de proyectos
-└── lib/i18n/         # Traducciones y contexto de idioma
+├── data/projects.ts  # Project data
+└── lib/i18n/         # Translations and language context
 ```
 
-## Documentación
+## Documentation
 
-| Documento | Contenido |
-| --------- | --------- |
-| [docs/README.md](docs/README.md) | Índice de documentación |
-| [docs/DESIGN.md](docs/DESIGN.md) | Sistema visual y tokens |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitectura técnica |
-| [docs/I18N.md](docs/I18N.md) | Guía de internacionalización |
-| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Convenciones y contribución |
-| [AGENTS.md](AGENTS.md) | Reglas para agentes IA |
+| Document | Content |
+| -------- | ------- |
+| [docs/README.md](docs/README.md) | Documentation index |
+| [docs/DESIGN.md](docs/DESIGN.md) | Visual system and tokens |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical architecture |
+| [docs/I18N.md](docs/I18N.md) | Internationalisation guide |
+| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Conventions and contribution |
+| [AGENTS.md](AGENTS.md) | AI agent rules |
 
-## Características
+## Features
 
-- Secciones animadas con GSAP y ScrollTrigger
-- Modal de preview de proyectos con galería y skeleton de carga (SkyGate y Zoro Security solo GitHub)
-- Tema automático por hora local (light 07:00–19:00) con override manual vía botón sol/luna
-- Idioma por defecto inglés; banner de sugerencia ES en regiones hispanohablantes
-- Selector de idioma ES/EN en navbar
-- Diseño responsive con liquid glass y neumorfismo
-- Accesibilidad: focus trap en modales, `prefers-reduced-motion`, landmarks ARIA
+- GSAP and ScrollTrigger animated sections
+- Project preview modal with gallery and loading skeleton (SkyGate and Zoro Security: GitHub only)
+- Automatic theme by local time (light 07:00–19:00) with manual override via sun/moon button
+- Default language English; Spanish suggestion banner in Spanish-speaking regions
+- ES/EN language selector in navbar
+- Responsive design with liquid glass and neumorphism
+- Accessibility: focus trap in modals, `prefers-reduced-motion`, ARIA landmarks
 
 ## Deploy
 
-**Producción:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app) (Vercel, conectado al repo `portfoliojme`).
+**Production:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app) (Vercel, connected to the `portfoliojme` repo).
 
-### Flujo local → producción
+### Local → production workflow
 
 ```bash
-npm run dev      # desarrollo en Mac (no afecta producción)
-npm run lint     # verificar antes de subir
-npm run build    # simula el build de Vercel
+npm run dev      # local development (does not affect production)
+npm run lint     # verify before pushing
+npm run build    # simulates the Vercel build
 git add … && git commit -m "…" && git push origin main
 ```
 
-### Build manual local
+### Local production build
 
 ```bash
 npm run build
-npm run start    # prueba el build en http://localhost:3000
+npm run start    # test the build at http://localhost:3000
 ```
 
-## Autor
+## Author
 
-**Julián Martínez Espitia** — Ingeniería de Software, Universidad de Cartagena
+**Julián Martínez Espitia** — Software Engineering, University of Cartagena
 
 - GitHub: [@julianmeoficial](https://github.com/julianmeoficial)
 - LinkedIn: [julianmeoficial](https://linkedin.com/in/julianmeoficial)
 - Email: julianmeoficial@outlook.com
 
-## Licencia
+## Licence
 
-Proyecto personal — todos los derechos reservados...
+Personal project — all rights reserved.

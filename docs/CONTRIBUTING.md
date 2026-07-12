@@ -1,181 +1,208 @@
-# Contribución
+# Contributing
 
-Guía para trabajar en el portfolio de Julián Martínez Espitia.
+Guide for working on Julián Martínez Espitia's portfolio.
 
-## Requisitos
+## Requirements
 
 - Node.js 18+
-- npm (o pnpm/yarn)
+- npm (or pnpm/yarn)
 
 ## Scripts
 
-| Comando | Descripción |
+| Command | Description |
 | ------- | ----------- |
-| `npm run dev` | Servidor de desarrollo en `http://localhost:3000` |
-| `npm run build` | Build de producción |
-| `npm run start` | Servidor de producción (tras build) |
+| `npm run dev` | Development server at `http://localhost:3000` |
+| `npm run build` | Production build |
+| `npm run start` | Production server (after build) |
 | `npm run lint` | ESLint |
 
-## Convenciones de código
+## Code conventions
 
 ### TypeScript + React
 
-- Componentes de sección: `'use client'` cuando usan hooks, GSAP o eventos.
-- Tipos explícitos en props y exports públicos.
-- Un componente por carpeta con `index.ts` barrel opcional.
+- Section components: `'use client'` when using hooks, GSAP, or events.
+- Explicit types on props and public exports.
+- One component per folder with optional `index.ts` barrel.
 
 ### CSS Modules
 
-- Un `.module.css` por componente, colocalizado.
-- Clases en **camelCase** semánticas (`.cardTitle`, no `.blue-text`).
-- Estilos visuales vía tokens CSS (`var(--color-*)`, `var(--space-*)`).
-- No hardcodear colores hex en módulos.
+- One `.module.css` per component, colocated.
+- **camelCase** semantic classes (`.cardTitle`, not `.blue-text`).
+- Visual styles via CSS tokens (`var(--color-*)`, `var(--space-*)`).
+- Do not hardcode hex colours in modules.
 
 ### GSAP
 
-- Usar `useGSAP` con `{ scope: ref }` para cleanup automático.
-- Respetar `prefersReducedMotion()` de `src/lib/motion/`.
-- Animar solo `transform` y `opacity` cuando sea posible.
+- Use `useGSAP` with `{ scope: ref }` for automatic cleanup.
+- Respect `prefersReducedMotion()` from `src/lib/motion/`.
+- Animate only `transform` and `opacity` where possible.
 
 ### i18n
 
-- Nunca texto user-facing hardcoded.
-- Actualizar `types.ts`, `es.ts` y `en.ts` en el mismo PR.
-- Los `aria-label` también pasan por i18n.
+- Never hardcode user-facing text.
+- Update `types.ts`, `es.ts`, and `en.ts` in the same PR.
+- `aria-label` attributes also go through i18n.
 
-### Modales y capas
+### Modals and layers
 
-- Modales portaleados a `document.body` (fuera de `<main>`).
-- `useModalLock` aplica `inert` + `aria-hidden` en `<main>` y `#site-navbar`.
-- `html.modal-open` bloquea interacción con la navbar.
-- Lightbox renderizado como hermano del modal, no como hijo del `role="dialog"`.
+- Modals portalled to `document.body` (outside `<main>`).
+- `useModalLock` applies `inert` + `aria-hidden` on `<main>` and `#site-navbar`.
+- `html.modal-open` blocks interaction with the navbar.
+- Lightbox rendered as a sibling of the modal, not as a child of `role="dialog"`.
 
-## Añadir un proyecto
+## Adding a project
 
-1. Añadir screenshots en `public/screenshots/` (formato `.webp` o `.png`).
-2. Entrada en `src/data/projects.ts` con descripciones ES/EN.
-3. Icono en `PROJECT_ICONS` de `Projects.tsx`.
-4. Verificar enlace GitHub y modal de preview.
+1. Add screenshots in `public/screenshots/` named `{id}-{n}.webp` or `{id}-{n}.png`.
+2. Entry in `src/data/projects.ts` with ES/EN descriptions and screenshot paths.
+3. Icon in `PROJECT_ICONS` in `Projects.tsx`.
+4. Verify GitHub link and preview modal (gallery `contain` + lightbox).
+5. If the author's GitHub README Tech Stack changes, update `SKILL_CATEGORIES` in `Skills.tsx` and i18n labels if needed.
 
-## Changelog de correcciones (2026-06)
+## Fix changelog (2026-06)
 
-### Modal de proyectos — interacción
+### Project modal — interaction
 
-| Área | Problema | Solución | Archivos |
-| ---- | -------- | -------- | -------- |
-| Modal congelado | `inert` en `<main>` bloqueaba el modal renderizado dentro | Portal a `document.body` | `ProjectModal.tsx` |
-| Scroll lock | Lógica dispersa | Hook `useModalLock` centralizado | `useModalLock.ts` |
-| Navbar activa | `.header` tenía `pointer-events: auto` sobre el wrapper bloqueado | Regla `modal-open` en wrapper **y** header | `Navbar.module.css` |
-| Navbar ARIA | Navbar seguía en árbol accesible | `aria-hidden` en `#site-navbar` al abrir modal | `useModalLock.ts`, `Navbar.tsx` |
+| Area | Issue | Solution | Files |
+| ---- | ----- | -------- | ----- |
+| Frozen modal | `inert` on `<main>` blocked the modal rendered inside | Portal to `document.body` | `ProjectModal.tsx` |
+| Scroll lock | Scattered logic | Centralised `useModalLock` hook | `useModalLock.ts` |
+| Active navbar | `.header` had `pointer-events: auto` over the blocked wrapper | `modal-open` rule on wrapper **and** header | `Navbar.module.css` |
+| Navbar ARIA | Navbar remained in accessible tree | `aria-hidden` on `#site-navbar` when modal opens | `useModalLock.ts`, `Navbar.tsx` |
 
 ### Focus trap
 
-| Área | Problema | Solución | Archivos |
-| ---- | -------- | -------- | -------- |
-| Lightbox | Al abrir lightbox, el trap del modal devolvía foco al botón Preview | Opción `restoreFocus: false` en `useFocusTrap` | `useFocusTrap.ts`, `ProjectModal.tsx` |
-| Elementos omitidos | Filtro `offsetParent` excluía nodos válidos en overlays fixed | Filtro por `getClientRects()` + `aria-hidden` | `useFocusTrap.ts` |
+| Area | Issue | Solution | Files |
+| ---- | ----- | -------- | ----- |
+| Lightbox | Opening lightbox, modal trap returned focus to Preview button | `restoreFocus: false` option in `useFocusTrap` | `useFocusTrap.ts`, `ProjectModal.tsx` |
+| Omitted elements | `offsetParent` filter excluded valid nodes in fixed overlays | Filter by `getClientRects()` + `aria-hidden` | `useFocusTrap.ts` |
 
-### ARIA y semántica
+### ARIA and semantics
 
-| Área | Problema | Solución | Archivos |
-| ---- | -------- | -------- | -------- |
-| Dialog modal | `aria-label` duplicaba el `<h2>` visible | `aria-labelledby` + `id` en título | `ProjectModal.tsx` |
-| Lightbox | Label mezclaba acción de cierre con contenido | `aria-labelledby` con `projects.lightbox_label` | `ImageLightbox.tsx` |
-| Carrusel dots | Patrón `tablist/tab` sin `tabpanel` | `role="group"` + `aria-current` en botones | `ProjectGallery.tsx` |
-| Slides | `<div onClick>` sin rol de botón | `<button type="button">` por slide | `ProjectGallery.tsx` |
-| Estado slide | Sin anuncio para lectores de pantalla | `aria-live="polite"` en contador | `ProjectGallery.tsx`, `ImageLightbox.tsx` |
-| Labels en inglés | `aria-label` hardcoded en varios componentes | Claves i18n en `common`, `nav`, `footer`, `projects` | `es.ts`, `en.ts`, componentes |
+| Area | Issue | Solution | Files |
+| ---- | ----- | -------- | ----- |
+| Modal dialog | `aria-label` duplicated visible `<h2>` | `aria-labelledby` + `id` on title | `ProjectModal.tsx` |
+| Lightbox | Label mixed close action with content | `aria-labelledby` with `projects.lightbox_label` | `ImageLightbox.tsx` |
+| Carousel dots | `tablist/tab` pattern without `tabpanel` | `role="group"` + `aria-current` on buttons | `ProjectGallery.tsx` |
+| Slides | `<div onClick>` without button role | `<button type="button">` per slide | `ProjectGallery.tsx` |
+| Slide state | No announcement for screen readers | `aria-live="polite"` on counter | `ProjectGallery.tsx`, `ImageLightbox.tsx` |
+| English labels | Hardcoded `aria-label` in several components | i18n keys in `common`, `nav`, `footer`, `projects` | `es.ts`, `en.ts`, components |
 
-### CSS y tokens
+### CSS and tokens
 
-| Área | Problema | Solución | Archivos |
-| ---- | -------- | -------- | -------- |
-| Tokens faltantes | `--glass-bg-hover`, `--glass-border-hover`, `--glow-accent`, `--shadow-md` usados pero no definidos | Añadidos en dark y light | `globals.css` |
-| Overlays | rgba/hex hardcoded en gallery y lightbox | Tokens `--overlay-*` | `globals.css`, `ProjectGallery.module.css`, `ImageLightbox.module.css` |
-| Focus teclado | Sin estilo global consistente | `:focus-visible` en `globals.css` | `globals.css` |
-| Touch targets | Dots del carrusel de 8×8px | `min-width/height: 44px` con punto visual en `::after` | `ProjectGallery.module.css` |
-| Placeholders | Skeleton colapsaba a 0px de alto | `min-height: 12rem` en wrapper | `ImageWithSkeleton.module.css` |
+| Area | Issue | Solution | Files |
+| ---- | ----- | -------- | ----- |
+| Missing tokens | `--glass-bg-hover`, `--glass-border-hover`, `--glow-accent`, `--shadow-md` used but undefined | Added in dark and light | `globals.css` |
+| Overlays | Hardcoded rgba/hex in gallery and lightbox | `--overlay-*` tokens | `globals.css`, `ProjectGallery.module.css`, `ImageLightbox.module.css` |
+| Keyboard focus | No consistent global style | `:focus-visible` in `globals.css` | `globals.css` |
+| Touch targets | Carousel dots at 8×8px | `min-width/height: 44px` with visual dot in `::after` | `ProjectGallery.module.css` |
+| Placeholders | Skeleton collapsed to 0px height | `min-height: 12rem` on wrapper | `ImageWithSkeleton.module.css` |
 
-### Galería y lightbox (UX)
+### Gallery and lightbox (UX)
 
-| Área | Cambio | Archivos |
-| ---- | ------ | -------- |
-| Carrusel | `scroll-snap` horizontal con flechas, dots y teclado | `ProjectGallery.tsx` |
-| Lightbox | Vista ampliada portaleada (z-index 300) con GSAP | `ImageLightbox.tsx` |
-| Escape | Cierra lightbox primero, luego modal | `ProjectModal.tsx`, `ImageLightbox.tsx` |
-| Salida modal | Animación GSAP antes de desmontar | `ProjectModal.tsx` |
+| Area | Change | Files |
+| ---- | ------ | ----- |
+| Carousel | Horizontal `scroll-snap` with arrows, dots, and keyboard | `ProjectGallery.tsx` |
+| Lightbox | Portalled expanded view (z-index 300) with GSAP | `ImageLightbox.tsx` |
+| Escape | Closes lightbox first, then modal | `ProjectModal.tsx`, `ImageLightbox.tsx` |
+| Modal exit | GSAP animation before unmount | `ProjectModal.tsx` |
 
-### Screenshots reales (2026-06)
+### Real screenshots (2026-06)
 
-| Área | Cambio | Archivos |
-| ---- | ------ | -------- |
-| SkyVault | 8 capturas WebP renombradas `skyvault-1..8.webp` | `public/screenshots/`, `projects.ts` |
-| SelanFlow | 6 capturas WebP renombradas `selanflow-1..6.webp` | `public/screenshots/`, `projects.ts` |
-| SkyGate | Sin preview; solo enlace GitHub (`screenshots: []`) | `projects.ts`, `Projects.tsx` |
+| Area | Change | Files |
+| ---- | ------ | ----- |
+| SkyVault | 8 WebP screenshots renamed `skyvault-1..8.webp` | `public/screenshots/`, `projects.ts` |
+| SelanFlow | 6 WebP screenshots renamed `selanflow-1..6.webp` | `public/screenshots/`, `projects.ts` |
+| SkyGate | No preview; GitHub link only (`screenshots: []`) | `projects.ts`, `Projects.tsx` |
 
-### Screenshots nuevos (2026-07)
+### New screenshots (2026-07)
 
-| Área | Cambio | Archivos |
-| ---- | ------ | -------- |
-| ODC Simulator | 3 capturas PNG `odc-simulator-1..3.png` | `public/screenshots/`, `projects.ts` |
-| RLC Lab | 5 capturas PNG `rlc-lab-1..5.png` | `public/screenshots/`, `projects.ts` |
-| Zoro Security | Sin preview; solo enlace GitHub (`screenshots: []`) | `projects.ts`, `Projects.tsx` |
+| Area | Change | Files |
+| ---- | ------ | ----- |
+| ODC Simulator | 3 PNG screenshots `odc-simulator-1..3.png` | `public/screenshots/`, `projects.ts` |
+| RLC Lab | 5 PNG screenshots `rlc-lab-1..5.png` | `public/screenshots/`, `projects.ts` |
+| Zoro Security | No preview; GitHub link only (`screenshots: []`) | `projects.ts`, `Projects.tsx` |
+| SelanFlow | Replacement: 6 WebP → 8 PNG `selanflow-1..8.png` (WebP removed) | `public/screenshots/`, `projects.ts` |
+| SkyVault | Replacement: 8 WebP → 16 PNG `skyvault-1..16.png` (WebP removed) | `public/screenshots/`, `projects.ts` |
 
-### Preferencias de usuario — tema e idioma
+### Gallery and lightbox — full image (2026-07)
 
-| Key | Valores | Descripción |
-| --- | ------- | ----------- |
-| `portfolio-theme-mode` | `auto` \| `manual` | `auto` por defecto: light 07:00–19:00 hora local |
-| `portfolio-theme` | `light` \| `dark` | Tema guardado cuando el usuario usa el botón sol/luna |
-| `portfolio-lang` | `es` \| `en` | Idioma elegido; primera visita sin key → inglés |
-| `portfolio-lang-prompt-dismissed` | `true` | Banner de sugerencia ES ya descartado |
+| Area | Change | Files |
+| ---- | ------ | ----- |
+| Carousel | `object-fit: contain` + letterbox; `max-height: min(55vh, 28rem)` | `ProjectGallery.module.css` |
+| Wrapper | `wrapperClassName` on `ImageWithSkeleton` to centre screenshots | `ImageWithSkeleton.tsx`, `ProjectGallery.tsx` |
+| Lightbox | Internal controls (close/nav/counter); `clamp` padding; `object-fit: contain` | `ImageLightbox.module.css` |
+| Modal body | More compact padding around gallery | `ProjectModal.module.css` |
 
-- Tema automático: [`src/lib/theme/themeUtils.ts`](../src/lib/theme/themeUtils.ts) + [`useTheme.ts`](../src/lib/theme/useTheme.ts)
-- Banner de idioma: [`LanguagePrompt.tsx`](../src/components/common/LanguagePrompt/LanguagePrompt.tsx) + [`localeUtils.ts`](../src/lib/i18n/localeUtils.ts)
-- El botón de tema en Navbar **sigue visible**; al usarlo pasa a modo `manual`
+### Skills — Tech Stack from README (2026-07)
 
-## Versionado y deploy (Vercel)
+Source: Tech Stack section of the author's GitHub README. Chips not localised; categories via i18n.
 
-### Qué va a Git vs qué no
+| Key | Chips |
+| --- | ----- |
+| `languages` | Java, TypeScript, JavaScript, Kotlin, Swift |
+| `frontend` | React, Next.js, Vite, HTML, CSS, Tailwind, GSAP |
+| `backend` | Spring Boot, PostgreSQL, Supabase, Prisma, WebSocket, JWT, REST APIs |
+| `tools` | Git, GitHub, Vercel, Figma, Maven, Gradle |
 
-| Incluir en Git | Excluir (`.gitignore`) |
+- i18n key `categories.database` renamed to `categories.tools`
+- Labels: EN `Backend & Data` / `Tools`; ES `Backend y datos` / `Herramientas`
+- Files: `Skills.tsx`, `types.ts`, `es.ts`, `en.ts`
+
+### User preferences — theme and language
+
+| Key | Values | Description |
+| --- | ------ | ----------- |
+| `portfolio-theme-mode` | `auto` \| `manual` | `auto` by default: light 07:00–19:00 local time |
+| `portfolio-theme` | `light` \| `dark` | Theme stored when user uses sun/moon button |
+| `portfolio-lang` | `es` \| `en` | Selected language; first visit without key → English |
+| `portfolio-lang-prompt-dismissed` | `true` | Spanish suggestion banner already dismissed |
+
+- Automatic theme: [`src/lib/theme/themeUtils.ts`](../src/lib/theme/themeUtils.ts) + [`useTheme.ts`](../src/lib/theme/useTheme.ts)
+- Language banner: [`LanguagePrompt.tsx`](../src/components/common/LanguagePrompt/LanguagePrompt.tsx) + [`localeUtils.ts`](../src/lib/i18n/localeUtils.ts)
+- Theme button in Navbar **remains visible**; using it switches to `manual` mode
+
+## Versioning and deploy (Vercel)
+
+### What goes in Git vs what does not
+
+| Include in Git | Exclude (`.gitignore`) |
 | -------------- | ---------------------- |
 | `src/`, `public/screenshots/`, `docs/` | `node_modules/` |
 | `package.json`, `package-lock.json` | `.next/` |
 | Config (`next.config.ts`, `tsconfig.json`) | `.idea/`, `.env*`, `.vercel/` |
 
-Vercel clona el repo, ejecuta `npm install` + `npm run build` y sirve el resultado. Solo lo commiteado en `main` llega a producción.
+Vercel clones the repo, runs `npm install` + `npm run build`, and serves the result. Only what is committed to `main` reaches production.
 
-### Primer deploy
+### First deploy
 
-1. `npm run lint` y `npm run build` en local.
-2. `git push origin main` con todo el portfolio.
+1. `npm run lint` and `npm run build` locally.
+2. `git push origin main` with the full portfolio.
 3. [vercel.com](https://vercel.com) → Import → `julianmeoficial/portfoliojme`.
-4. Framework Next.js (default). Sin env vars por ahora.
-5. Verificar modal, screenshots y i18n en la URL `.vercel.app`.
+4. Next.js framework (default). No env vars for now.
+5. Verify modal, screenshots, and i18n on the `.vercel.app` URL.
 
-### Ciclo habitual
+### Typical cycle
 
-`npm run dev` (Mac) → editar → `lint` + `build` → commit → push → deploy automático en Vercel.
+`npm run dev` (Mac) → edit → `lint` + `build` → commit → push → automatic deploy on Vercel.
 
-## Checklist antes de PR
+## Pre-PR checklist
 
-- [ ] `npm run lint` sin errores
-- [ ] `npm run build` exitoso
-- [ ] Textos en ES y EN (incluidos aria-labels)
-- [ ] Modal: cerrar con X, Escape y backdrop
-- [ ] Modal: scroll del body interno funciona
-- [ ] Enlace Code abre GitHub en nueva pestaña
-- [ ] Carrusel: flechas, dots y swipe
-- [ ] Lightbox: clic en imagen abre vista ampliada; Escape cierra lightbox antes que modal
-- [ ] Navbar no recibe clics con modal abierto
-- [ ] Tab cicla dentro de modal/lightbox sin escapar al fondo
-- [ ] `prefers-reduced-motion` verificado
-- [ ] Screenshots optimizados (webp o png)
-- [ ] Tema auto: light de día / dark de noche sin `localStorage`; botón tema fija modo manual
-- [ ] Banner ES: solo en región hispanohablante sin preferencia guardada; dismiss no reaparece
-- [ ] Idioma por defecto inglés en primera visita
+- [ ] `npm run lint` passes with no errors
+- [ ] `npm run build` succeeds
+- [ ] Text in ES and EN (including aria-labels)
+- [ ] Modal: close with X, Escape, and backdrop
+- [ ] Modal: internal body scroll works
+- [ ] Code link opens GitHub in a new tab
+- [ ] Carousel: arrows, dots, and swipe
+- [ ] Lightbox: click on image opens expanded view; Escape closes lightbox before modal
+- [ ] Navbar does not receive clicks with modal open
+- [ ] Tab cycles within modal/lightbox without escaping to background
+- [ ] `prefers-reduced-motion` verified
+- [ ] Screenshots optimised (webp or png)
+- [ ] Auto theme: light by day / dark by night without `localStorage`; theme button fixes manual mode
+- [ ] ES banner: only in Spanish-speaking region without stored preference; dismiss does not reappear
+- [ ] Default language English on first visit
 
-## Agentes IA
+## AI agents
 
-Si usas Cursor o Claude Code, lee [AGENTS.md](../AGENTS.md) antes de modificar el proyecto.
+If you use Cursor or Claude Code, read [AGENTS.md](../AGENTS.md) before modifying the project.

@@ -37,14 +37,14 @@ Before implementing visual changes, commit to the portfolio's aesthetic directio
 
 - **Tone**: refined minimalism with liquid glass and subtle neumorphism. Bold display typography (Cabinet Grotesk + Satoshi). Controlled motion, not decorative.
 - **Hierarchy through light, not fill**: hairline borders + semi-transparent glass replace heavy shadows.
-- **Intentional color**: warm neutral palette in dark/light modes. Per-project accents (`--project-color`), not generic purple gradients.
+- **Intentional colour**: warm neutral palette in dark/light modes. Per-project accents (`--project-color`), not generic purple gradients.
 - **Differentiation**: animated blobs, hero parallax, typographic reveal in About. Restraint executed with precision.
 
 If the brief is ambiguous, propose **one variation** within the existing system; do not reinvent the visual language per request.
 
 ### frontend_aesthetics
 
-> NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white or dark backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character. Use distinctive fonts (Cabinet Grotesk, Satoshi), cohesive CSS variable tokens, and GSAP animations for high-impact moments.
+> NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), clichéd colour schemes (particularly purple gradients on white or dark backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character. Use distinctive fonts (Cabinet Grotesk, Satoshi), cohesive CSS variable tokens, and GSAP animations for high-impact moments.
 
 ---
 
@@ -111,7 +111,7 @@ See [docs/I18N.md](docs/I18N.md).
 - Mobile menu: block body scroll, Escape to close, `aria-expanded`.
 - Landmarks: `<nav>`, `<main>`, `<footer>`, `<section>` with ids for anchors.
 - Images: descriptive `alt`; skeletons with `aria-busy` / `role="status"`.
-- Never signal state with color alone.
+- Never signal state with colour alone.
 
 ---
 
@@ -143,7 +143,7 @@ Current projects: **SkyVault**, **SelanFlow**, **SkyGate**, **ODC Simulator**, *
 
 ## Anti-patterns (do NOT)
 
-- Hardcode colors or spacing instead of CSS tokens
+- Hardcode colours or spacing instead of CSS tokens
 - Visible text without going through i18n
 - Animate layout properties with GSAP
 - Ignore `prefers-reduced-motion`
@@ -168,7 +168,7 @@ npm run lint     # ESLint
 | --- | ------- |
 | [docs/DESIGN.md](docs/DESIGN.md) | Visual system |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Architecture |
-| [docs/I18N.md](docs/I18N.md) | Internationalization |
+| [docs/I18N.md](docs/I18N.md) | Internationalisation |
 | [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Conventions |
 
 
