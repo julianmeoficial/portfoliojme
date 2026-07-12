@@ -64,4 +64,50 @@ export const projects: Project[] = [
         screenshots: [],
         color: '#8b5cf6',
     },
+    {
+        id: 'odc-simulator',
+        title: 'ODC Simulator',
+        description: {
+            es: 'Simulador de CPU en Java 21 (CLI) que modela el ciclo fetch–decode–execute, caché HIT/MISS y compara memoria unificada (UMA) vs segmentada con penalización PCIe. Determinista y reproducible.',
+            en: 'Java 21 CLI CPU simulator modeling the fetch–decode–execute cycle, cache HIT/MISS events, and unified (UMA) vs segmented memory with PCIe penalty. Deterministic and reproducible.',
+        },
+        stack: ['Java 21', 'Maven', 'JUnit 5'],
+        githubUrl: 'https://github.com/julianmeoficial/odc-simulator',
+        screenshots: [
+            '/screenshots/odc-simulator-1.png',
+            '/screenshots/odc-simulator-2.png',
+            '/screenshots/odc-simulator-3.png',
+        ],
+        color: '#f59e0b',
+    },
+    {
+        id: 'rlc-lab',
+        title: 'RLC Lab',
+        description: {
+            es: 'App web Next.js que modela un circuito RLC serie en AC, resuelve la EDO con Runge–Kutta 4, visualiza impedancia, fasores y régimen de amortiguamiento, y conecta el modelo con cinco casos industriales.',
+            en: 'Next.js web app modeling a series RLC circuit in AC, solving the ODE with Runge–Kutta 4, visualizing impedance, phasors, and damping regime, and linking the model to five real-world industrial cases.',
+        },
+        stack: ['Next.js', 'React', 'TypeScript', 'GSAP', 'Recharts', 'KaTeX'],
+        githubUrl: 'https://github.com/julianmeoficial/rlc-lab',
+        screenshots: [
+            '/screenshots/rlc-lab-1.png',
+            '/screenshots/rlc-lab-2.png',
+            '/screenshots/rlc-lab-3.png',
+            '/screenshots/rlc-lab-4.png',
+            '/screenshots/rlc-lab-5.png',
+        ],
+        color: '#10b981',
+    },
+    {
+        id: 'bk-ops-security',
+        title: 'Zoro Security',
+        description: {
+            es: 'Case study documental de un MCP server para BrevKu que orquesta escaneos de seguridad y observabilidad vía GitHub Actions y Cloudflare Workers, con 17 tools, sincronización Notion y agentes IA — sin UI propia.',
+            en: 'Documentary case study of an MCP server for BrevKu that orchestrates security scans and observability via GitHub Actions and Cloudflare Workers, with 17 tools, Notion sync, and AI agents — no dedicated UI.',
+        },
+        stack: ['TypeScript', 'MCP', 'Cloudflare Workers', 'GitHub Actions', 'Notion', 'Zod'],
+        githubUrl: 'https://github.com/julianmeoficial/BK-OPS-Security-Case-Study',
+        screenshots: [],
+        color: '#ef4444',
+    },
 ];

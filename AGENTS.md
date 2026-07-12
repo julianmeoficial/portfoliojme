@@ -134,10 +134,10 @@ Edit only [`src/data/projects.ts`](src/data/projects.ts):
 
 - Bilingual descriptions (`Record<Language, string>`)
 - Correct GitHub links (case-sensitive)
-- Screenshots in `public/screenshots/*.webp`
+- Screenshots in `public/screenshots/` (`.webp` or `.png`)
 - Matching icon in `PROJECT_ICONS` in `Projects.tsx`
 
-Current projects: **SkyVault**, **SelanFlow**, **SkyGate**.
+Current projects: **SkyVault**, **SelanFlow**, **SkyGate**, **ODC Simulator**, **RLC Lab**, **Zoro Security**.
 
 ---
 

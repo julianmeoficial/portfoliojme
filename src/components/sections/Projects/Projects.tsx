@@ -16,6 +16,9 @@ import {
     PaperAirplaneIcon,
     CpuChipIcon,
     BuildingOfficeIcon,
+    CommandLineIcon,
+    BeakerIcon,
+    ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 
 if (typeof window !== 'undefined') {
@@ -26,6 +29,9 @@ const PROJECT_ICONS: Record<string, React.ElementType> = {
     skyvault: PaperAirplaneIcon,
     selanflow: CpuChipIcon,
     skygate: BuildingOfficeIcon,
+    'odc-simulator': CommandLineIcon,
+    'rlc-lab': BeakerIcon,
+    'bk-ops-security': ShieldCheckIcon,
 };
 
 export default function Projects(): JSX.Element {

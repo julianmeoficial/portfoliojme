@@ -22,6 +22,9 @@ Portfolio personal de **Julián Martínez Espitia**, desarrollador frontend y fu
 | **SkyVault** | Catálogo y comparador de aeronaves comerciales con WebSocket y panel de moderación | [skyvault](https://github.com/julianmeoficial/skyvault) |
 | **SelanFlow** | Tareas + Pomodoro + simulador FIFO/RR con Gantt y métricas en tiempo real | [SelanFlow](https://github.com/julianmeoficial/SelanFlow) |
 | **SkyGate** | Gestión automatizada de gates aeroportuarios con DFA y monitoreo en tiempo real | [SkyGate](https://github.com/julianmeoficial/SkyGate) |
+| **ODC Simulator** | Simulador de CPU en Java 21 con caché HIT/MISS y comparativa UMA vs segmentada | [odc-simulator](https://github.com/julianmeoficial/odc-simulator) |
+| **RLC Lab** | Simulador interactivo de circuito RLC en AC con EDO, RK4 y casos industriales | [rlc-lab](https://github.com/julianmeoficial/rlc-lab) |
+| **Zoro Security** | Case study de MCP server para seguridad y observabilidad (BrevKu) | [BK-OPS-Security-Case-Study](https://github.com/julianmeoficial/BK-OPS-Security-Case-Study) |
 
 ## Quick Start
 
@@ -69,7 +72,7 @@ src/
 ## Características
 
 - Secciones animadas con GSAP y ScrollTrigger
-- Modal de preview de proyectos con galería y skeleton de carga (SkyGate solo GitHub)
+- Modal de preview de proyectos con galería y skeleton de carga (SkyGate y Zoro Security solo GitHub)
 - Tema automático por hora local (light 07:00–19:00) con override manual vía botón sol/luna
 - Idioma por defecto inglés; banner de sugerencia ES en regiones hispanohablantes
 - Selector de idioma ES/EN en navbar

@@ -7,7 +7,7 @@ Portfolio personal single-page construido con **Next.js 16** (App Router), **Rea
 ```
 portfolio/
 ├── public/
-│   └── screenshots/          # Capturas de proyectos (.webp)
+│   └── screenshots/          # Capturas de proyectos (.webp o .png)
 ├── docs/                       # Documentación técnica
 ├── src/
 │   ├── app/

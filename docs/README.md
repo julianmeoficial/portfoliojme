@@ -25,3 +25,6 @@
 | SkyVault | [github.com/julianmeoficial/skyvault](https://github.com/julianmeoficial/skyvault) |
 | SelanFlow | [github.com/julianmeoficial/SelanFlow](https://github.com/julianmeoficial/SelanFlow) |
 | SkyGate | [github.com/julianmeoficial/SkyGate](https://github.com/julianmeoficial/SkyGate) |
+| ODC Simulator | [github.com/julianmeoficial/odc-simulator](https://github.com/julianmeoficial/odc-simulator) |
+| RLC Lab | [github.com/julianmeoficial/rlc-lab](https://github.com/julianmeoficial/rlc-lab) |
+| Zoro Security | [github.com/julianmeoficial/BK-OPS-Security-Case-Study](https://github.com/julianmeoficial/BK-OPS-Security-Case-Study) |

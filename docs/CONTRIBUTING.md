@@ -52,7 +52,7 @@ Guía para trabajar en el portfolio de Julián Martínez Espitia.
 
 ## Añadir un proyecto
 
-1. Añadir screenshots en `public/screenshots/` (formato `.webp`).
+1. Añadir screenshots en `public/screenshots/` (formato `.webp` o `.png`).
 2. Entrada en `src/data/projects.ts` con descripciones ES/EN.
 3. Icono en `PROJECT_ICONS` de `Projects.tsx`.
 4. Verificar enlace GitHub y modal de preview.
@@ -113,6 +113,14 @@ Guía para trabajar en el portfolio de Julián Martínez Espitia.
 | SelanFlow | 6 capturas WebP renombradas `selanflow-1..6.webp` | `public/screenshots/`, `projects.ts` |
 | SkyGate | Sin preview; solo enlace GitHub (`screenshots: []`) | `projects.ts`, `Projects.tsx` |
 
+### Screenshots nuevos (2026-07)
+
+| Área | Cambio | Archivos |
+| ---- | ------ | -------- |
+| ODC Simulator | 3 capturas PNG `odc-simulator-1..3.png` | `public/screenshots/`, `projects.ts` |
+| RLC Lab | 5 capturas PNG `rlc-lab-1..5.png` | `public/screenshots/`, `projects.ts` |
+| Zoro Security | Sin preview; solo enlace GitHub (`screenshots: []`) | `projects.ts`, `Projects.tsx` |
+
 ### Preferencias de usuario — tema e idioma
 
 | Key | Valores | Descripción |
@@ -163,7 +171,7 @@ Vercel clona el repo, ejecuta `npm install` + `npm run build` y sirve el resulta
 - [ ] Navbar no recibe clics con modal abierto
 - [ ] Tab cicla dentro de modal/lightbox sin escapar al fondo
 - [ ] `prefers-reduced-motion` verificado
-- [ ] Screenshots optimizados (webp)
+- [ ] Screenshots optimizados (webp o png)
 - [ ] Tema auto: light de día / dark de noche sin `localStorage`; botón tema fija modo manual
 - [ ] Banner ES: solo en región hispanohablante sin preferencia guardada; dismiss no reaparece
 - [ ] Idioma por defecto inglés en primera visita
