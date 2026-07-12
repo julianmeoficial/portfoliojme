@@ -8,6 +8,7 @@ interface ImageWithSkeletonProps {
     src: string;
     alt: string;
     className?: string;
+    wrapperClassName?: string;
     loading?: 'lazy' | 'eager';
     errorLabel?: string;
     loadingLabel?: string;
@@ -17,6 +18,7 @@ export default function ImageWithSkeleton({
     src,
     alt,
     className,
+    wrapperClassName,
     loading = 'lazy',
     errorLabel = 'Could not load image',
     loadingLabel = 'Loading',
@@ -24,7 +26,7 @@ export default function ImageWithSkeleton({
     const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
 
     return (
-        <div className={styles.wrapper}>
+        <div className={`${styles.wrapper} ${wrapperClassName ?? ''}`}>
             {status === 'loading' && (
                 <Skeleton
                     className={styles.skeleton}

@@ -25,22 +25,22 @@ const SKILL_CATEGORIES = [
     {
         key: 'languages' as const,
         icon: CodeBracketIcon,
-        chips: ['Java', 'TypeScript', 'JavaScript (ES6+)', 'SQL', 'Kotlin', 'Swift'],
+        chips: ['Java', 'TypeScript', 'JavaScript', 'Kotlin', 'Swift'],
     },
     {
         key: 'frontend' as const,
         icon: CommandLineIcon,
-        chips: ['React', 'React + Vite', 'CSS Modules', 'GSAP', 'Context API', 'HTML5 & CSS3', 'Responsive Design'],
+        chips: ['React', 'Next.js', 'Vite', 'HTML', 'CSS', 'Tailwind', 'GSAP'],
     },
     {
         key: 'backend' as const,
         icon: ServerStackIcon,
-        chips: ['Spring Boot', 'Spring Data JPA', 'REST APIs', 'JWT', 'Maven', 'Gradle'],
+        chips: ['Spring Boot', 'PostgreSQL', 'Supabase', 'Prisma', 'WebSocket', 'JWT', 'REST APIs'],
     },
     {
-        key: 'database' as const,
+        key: 'tools' as const,
         icon: WrenchScrewdriverIcon,
-        chips: ['PostgreSQL', 'Git & GitHub', 'Vercel', 'Render', 'Figma', 'Notion', 'Linear'],
+        chips: ['Git', 'GitHub', 'Vercel', 'Figma', 'Maven', 'Gradle'],
     },
 ] as const;
 

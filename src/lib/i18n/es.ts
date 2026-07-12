@@ -73,8 +73,8 @@ export const es: Translations = {
         categories: {
             languages: 'Lenguajes',
             frontend: 'Frontend',
-            backend: 'Backend & APIs',
-            database: 'Base de datos & Herramientas',
+            backend: 'Backend y datos',
+            tools: 'Herramientas',
         },
     },
     contact: {

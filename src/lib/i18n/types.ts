@@ -71,7 +71,7 @@ export interface Translations {
             languages: string;
             frontend: string;
             backend: string;
-            database: string;
+            tools: string;
         };
     };
     contact: {

@@ -8,7 +8,7 @@
     background: var(--overlay-scrim-strong);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    padding: var(--space-6);
+    padding: clamp(var(--space-4), 4vw, var(--space-10));
     cursor: zoom-out;
 }
 
@@ -26,6 +26,9 @@
 
 .content {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     max-width: min(1200px, 95vw);
     max-height: 90vh;
     cursor: default;
@@ -34,17 +37,19 @@
 .image {
     display: block;
     max-width: 100%;
-    max-height: 85vh;
+    max-height: min(85vh, 100%);
     width: auto;
     height: auto;
+    object-fit: contain;
+    object-position: center;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
 }
 
 .closeBtn {
     position: absolute;
-    top: calc(-1 * var(--space-10));
-    right: 0;
+    top: var(--space-3);
+    right: var(--space-3);
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -70,12 +75,17 @@
 
 .counter {
     position: absolute;
-    bottom: calc(-1 * var(--space-8));
+    bottom: var(--space-3);
     left: 50%;
     transform: translateX(-50%);
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--overlay-text);
+    background: var(--overlay-scrim);
+    backdrop-filter: blur(8px);
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-full);
+    pointer-events: none;
 }
 
 .navBtn {
@@ -105,14 +115,26 @@
 }
 
 .navPrev {
-    left: calc(-1 * var(--space-12));
+    left: var(--space-3);
 }
 
 .navNext {
-    right: calc(-1 * var(--space-12));
+    right: var(--space-3);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
+    .navBtn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .closeBtn {
+        top: var(--space-2);
+        right: var(--space-2);
+        width: 36px;
+        height: 36px;
+    }
+
     .navPrev {
         left: var(--space-2);
     }
@@ -121,8 +143,8 @@
         right: var(--space-2);
     }
 
-    .closeBtn {
-        top: var(--space-2);
-        right: var(--space-2);
+    .counter {
+        bottom: var(--space-2);
+        font-size: var(--text-xs);
     }
 }

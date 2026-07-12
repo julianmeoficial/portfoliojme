@@ -129,6 +129,7 @@ export default function ProjectGallery({
                                 src={src}
                                 alt=""
                                 className={styles.slideImage}
+                                wrapperClassName={styles.slideImageWrapper}
                                 loading={i === 0 ? 'eager' : 'lazy'}
                                 errorLabel={t.common.image_error}
                                 loadingLabel={t.common.loading}
