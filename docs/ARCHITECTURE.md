@@ -7,7 +7,8 @@ Single-page personal portfolio built with **Next.js 16** (App Router), **React 1
 ```
 portfolio/
 ├── public/
-│   └── screenshots/          # Project screenshots (.webp or .png)
+│   ├── cv/                       # CV PDF for About download CTA
+│   └── screenshots/              # Project screenshots (.webp or .png)
 ├── docs/                       # Technical documentation
 ├── src/
 │   ├── app/

@@ -124,8 +124,8 @@ export default function About(): JSX.Element {
                                 {t.about.cta_github}
                             </a>
                             <a
-                                href="/cv-julian-martinez.pdf"
-                                download
+                                href="/cv/Julian_Martinez_Junior_SoftwareEngineer.pdf"
+                                download="Julian_Martinez_Junior_SoftwareEngineer.pdf"
                                 className={styles.btnSecondary}
                             >
                                 {t.about.cta_cv}

@@ -58,6 +58,12 @@ Guide for working on Julián Martínez Espitia's portfolio.
 4. Verify GitHub link and preview modal (gallery `contain` + lightbox).
 5. If the author's GitHub README Tech Stack changes, update `SKILL_CATEGORIES` in `Skills.tsx` and i18n labels if needed.
 
+## CV download
+
+- PDF lives at `public/cv/Julian_Martinez_Junior_SoftwareEngineer.pdf`.
+- About CTA links to `/cv/Julian_Martinez_Junior_SoftwareEngineer.pdf` with a `download` filename attribute.
+- To replace the CV, overwrite the PDF in `public/cv/` and keep the same filename, or update the `href` / `download` in `About.tsx` if the name changes.
+
 ## Fix changelog (2026-06)
 
 ### Project modal — interaction
@@ -148,6 +154,12 @@ Source: Tech Stack section of the author's GitHub README. Chips not localised; c
 - Labels: EN `Backend & Data` / `Tools`; ES `Backend y datos` / `Herramientas`
 - Files: `Skills.tsx`, `types.ts`, `es.ts`, `en.ts`
 
+### CV download path (2026-07)
+
+| Area | Change | Files |
+| ---- | ------ | ----- |
+| About CTA | Fixed 404: href now `/cv/Julian_Martinez_Junior_SoftwareEngineer.pdf` (was `/cv-julian-martinez.pdf`) | `About.tsx`, `public/cv/` |
+
 ### User preferences — theme and language
 
 | Key | Values | Description |
@@ -202,6 +214,7 @@ Vercel clones the repo, runs `npm install` + `npm run build`, and serves the res
 - [ ] Auto theme: light by day / dark by night without `localStorage`; theme button fixes manual mode
 - [ ] ES banner: only in Spanish-speaking region without stored preference; dismiss does not reappear
 - [ ] Default language English on first visit
+- [ ] CV download from About returns the PDF (`/cv/Julian_Martinez_Junior_SoftwareEngineer.pdf`)
 
 ## AI agents
 
