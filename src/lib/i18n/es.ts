@@ -36,7 +36,7 @@ export const es: Translations = {
         title_line2: 'Engineer &',
         title_line3: 'Designer.',
         bio: 'Soy Julián Martínez Espitia. Fusiono arquitectura limpia con experiencias visuales extremas usando React, TypeScript, Spring Boot y GSAP.',
-        education: '6.º semestre de Ingeniería de Software en la Universidad de Cartagena. Instructor de programación FullStack.',
+        education: '7.º semestre de Ingeniería de Software en la Universidad de Cartagena. Instructor de programación FullStack.',
         cta_projects: 'Ver Proyectos',
     },
     about: {
