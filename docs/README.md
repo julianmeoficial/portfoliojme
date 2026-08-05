@@ -1,30 +1,32 @@
-# Portfolio documentation
+# Documentation
 
-Index for the `docs/` folder. Repository entry point: [README.md](../README.md).
+Technical documentation for the [Portfolio JME](../README.md) repository.
 
-## Design and architecture
-
-| Document | Description |
-| -------- | ----------- |
-| [DESIGN.md](DESIGN.md) | Visual system: tokens, typography, liquid glass, themes, motion |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Next.js structure, i18n, GSAP, data flow |
-| [I18N.md](I18N.md) | Internationalisation guide (ES / EN, suggestion banner, default EN) |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Scripts, conventions, and contribution checklist |
-
-## AI agents
+## Getting started
 
 | Document | Description |
 | -------- | ----------- |
-| [../AGENTS.md](../AGENTS.md) | Rules for coding agents (Cursor, Claude) |
-| [../CLAUDE.md](../CLAUDE.md) | Reference to AGENTS.md |
+| [../README.md](../README.md) | Overview, stack, quick start, featured projects |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, scripts, conventions, deploy, pre-PR checklist |
 
-## Featured projects
+## Technical reference
 
-| Project | Repository |
-| ------- | ---------- |
-| SkyVault | [github.com/julianmeoficial/skyvault](https://github.com/julianmeoficial/skyvault) |
-| SelanFlow | [github.com/julianmeoficial/SelanFlow](https://github.com/julianmeoficial/SelanFlow) |
-| SkyGate | [github.com/julianmeoficial/SkyGate](https://github.com/julianmeoficial/SkyGate) |
-| ODC Simulator | [github.com/julianmeoficial/odc-simulator](https://github.com/julianmeoficial/odc-simulator) |
-| RLC Lab | [github.com/julianmeoficial/rlc-lab](https://github.com/julianmeoficial/rlc-lab) |
-| Zoro Security | [github.com/julianmeoficial/BK-OPS-Security-Case-Study](https://github.com/julianmeoficial/BK-OPS-Security-Case-Study) |
+| Document | Description |
+| -------- | ----------- |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Next.js structure, rendering flow, i18n, themes, GSAP |
+| [DESIGN.md](DESIGN.md) | Visual system: tokens, typography, liquid glass, motion |
+| [I18N.md](I18N.md) | Internationalisation (ES / EN, suggestion banner, default EN) |
+
+## History and agents
+
+| Document | Description |
+| -------- | ----------- |
+| [CHANGELOG.md](CHANGELOG.md) | Notable fixes and feature additions by release |
+| [../AGENTS.md](../AGENTS.md) | Rules for AI coding agents (Cursor, Claude Code) |
+| [../CLAUDE.md](../CLAUDE.md) | Pointer to AGENTS.md |
+
+## Documentation principles
+
+- **Single source of truth** — each topic has one canonical doc; others link to it instead of duplicating.
+- **README** is the public entry point; **docs/** holds depth; **AGENTS.md** holds agent-specific rules.
+- When conventions change, update the canonical doc first, then cross-references in CONTRIBUTING and AGENTS.
