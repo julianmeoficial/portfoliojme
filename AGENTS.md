@@ -171,4 +171,9 @@ npm run lint     # ESLint
 | [docs/I18N.md](docs/I18N.md) | Internationalisation |
 | [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Conventions |
 
+## Cursor Cloud specific instructions
+
+- Single static Next.js 16 app (no backend, database, or environment variables). Nothing extra needs to run to develop or test end to end.
+- Dependencies are refreshed automatically on VM startup (`npm install`). Standard commands are in the Commands section above (`npm run dev`, `npm run build`, `npm run lint`).
+- `npm run dev` serves on port 3000 (Turbopack). It is the primary way to exercise the app; there are no automated tests in this repo, so verify UI changes manually against the running dev server.
 
