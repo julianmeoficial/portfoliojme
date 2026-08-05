@@ -2,6 +2,8 @@
 
 Visual system for Julián Martínez Espitia's portfolio. Tokens defined in [`src/app/globals.css`](../src/app/globals.css).
 
+For agent coding rules (tokens, anti-patterns), see [AGENTS.md](../AGENTS.md).
+
 ## Aesthetic direction
 
 - **Tone**: refined minimalism with liquid glass and subtle neumorphism. References: premium dark interfaces, bold display typography, GSAP-controlled motion.

@@ -164,11 +164,22 @@ npm run lint     # ESLint
 
 ## Extended documentation
 
+Human-oriented docs live under `docs/`. Prefer linking to these instead of duplicating content in AGENTS.md.
+
 | Doc | Content |
 | --- | ------- |
-| [docs/DESIGN.md](docs/DESIGN.md) | Visual system |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Architecture |
+| [docs/README.md](docs/README.md) | Documentation index |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Architecture and data flow |
+| [docs/DESIGN.md](docs/DESIGN.md) | Visual system and tokens |
 | [docs/I18N.md](docs/I18N.md) | Internationalisation |
-| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Conventions |
+| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Setup, deploy, pre-PR checklist |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Notable fixes and releases |
 
+When changing conventions, update the canonical doc first, then cross-references in CONTRIBUTING and this file.
+
+## Cursor Cloud specific instructions
+
+- Single static Next.js 16 app (no backend, database, or environment variables).
+- Dependencies refresh on VM startup via `npm install` (see update script).
+- `npm run dev` serves on port 3000 (Turbopack). No automated tests — verify UI manually against the dev server.
 

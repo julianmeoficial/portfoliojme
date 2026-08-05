@@ -35,39 +35,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-### Scripts
-
-| Command | Description |
-| ------- | ----------- |
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run start` | Production server |
-| `npm run lint` | ESLint |
-
-## Structure
-
-```
-src/
-├── app/              # Layout, main page, globals.css
-├── components/
-│   ├── common/       # Navbar, Footer, Skeleton, Spinner
-│   └── sections/     # Hero, About, Projects, Skills, Contact
-├── data/projects.ts  # Project data
-└── lib/i18n/         # Translations and language context
-```
-
-## Documentation
-
-| Document | Content |
-| -------- | ------- |
-| [docs/README.md](docs/README.md) | Documentation index |
-| [docs/DESIGN.md](docs/DESIGN.md) | Visual system and tokens |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical architecture |
-| [docs/I18N.md](docs/I18N.md) | Internationalisation guide |
-| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Conventions and contribution |
-| [AGENTS.md](AGENTS.md) | AI agent rules |
+Open [http://localhost:3000](http://localhost:3000). See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for scripts, conventions, and the pre-PR checklist.
 
 ## Features
 
@@ -79,25 +47,30 @@ src/
 - Responsive design with liquid glass and neumorphism
 - Accessibility: focus trap in modals, `prefers-reduced-motion`, ARIA landmarks
 
+## Documentation
+
+Full index: [docs/README.md](docs/README.md)
+
+| Document | Content |
+| -------- | ------- |
+| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | Setup, conventions, deploy, pre-PR checklist |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical architecture |
+| [docs/DESIGN.md](docs/DESIGN.md) | Visual system and tokens |
+| [docs/I18N.md](docs/I18N.md) | Internationalisation guide |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Notable changes and fixes |
+| [AGENTS.md](AGENTS.md) | AI agent rules |
+
 ## Deploy
 
-**Production:** [julianmeoficial.vercel.app](https://julianmeoficial.vercel.app) (Vercel, connected to the `portfoliojme` repo).
-
-### Local → production workflow
+Production runs on [Vercel](https://vercel.com) from the `main` branch. Before pushing:
 
 ```bash
-npm run dev      # local development (does not affect production)
-npm run lint     # verify before pushing
-npm run build    # simulates the Vercel build
-git add … && git commit -m "…" && git push origin main
-```
-
-### Local production build
-
-```bash
+npm run lint
 npm run build
-npm run start    # test the build at http://localhost:3000
+git push origin main
 ```
+
+Details (Git vs `.gitignore`, first deploy, local production test): [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md#deploy-vercel).
 
 ## Author
 

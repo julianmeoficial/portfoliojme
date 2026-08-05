@@ -12,4 +12,4 @@ Key expectations:
 - All user-facing UI text through i18n (`es.ts` + `en.ts`)
 - Accessibility: focus traps, landmarks, descriptive labels
 
-Do not duplicate rules here. Update AGENTS.md when agent conventions change.
+Do not duplicate rules here. Update [AGENTS.md](AGENTS.md) when agent conventions change. Human docs: [docs/README.md](docs/README.md).

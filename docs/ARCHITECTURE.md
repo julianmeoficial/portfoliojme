@@ -2,32 +2,35 @@
 
 Single-page personal portfolio built with **Next.js 16** (App Router), **React 19**, **TypeScript**, and **GSAP**.
 
+For contribution workflow and adding projects, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Repository structure
 
 ```
 portfolio/
 ├── public/
-│   ├── cv/                       # CV PDF for About download CTA
-│   └── screenshots/              # Project screenshots (.webp or .png)
-├── docs/                       # Technical documentation
+│   ├── cv/                         # CV PDF for About download CTA
+│   └── screenshots/                # Project screenshots (.webp or .png)
+├── docs/                           # Technical documentation (see docs/README.md)
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx          # Root layout, metadata, providers
-│   │   ├── page.tsx            # Home (sections)
-│   │   ├── loading.tsx         # Route loading UI
-│   │   └── globals.css         # Tokens and global reset
+│   │   ├── layout.tsx              # Root layout, metadata, providers
+│   │   ├── page.tsx                # Home (sections)
+│   │   ├── loading.tsx             # Route loading UI
+│   │   └── globals.css             # Tokens and global reset
 │   ├── components/
-│   │   ├── common/             # Navbar, Footer, loading primitives
-│   │   └── sections/           # Hero, About, Projects, Skills, Contact
+│   │   ├── common/                 # Navbar, Footer, loading primitives
+│   │   └── sections/               # Hero, About, Projects, Skills, Contact
 │   ├── data/
-│   │   └── projects.ts         # Static project data
+│   │   └── projects.ts             # Static project data
 │   ├── lib/
-│   │   ├── i18n/               # Context + ES/EN translations + localeUtils
-│   │   ├── theme/              # themeUtils + useTheme (auto/manual)
-│   │   ├── hooks/              # useFocusTrap, useModalLock
-│   │   └── motion/             # prefersReducedMotion
+│   │   ├── i18n/                   # Context + ES/EN translations + localeUtils
+│   │   ├── theme/                  # themeUtils + useTheme (auto/manual)
+│   │   ├── hooks/                  # useFocusTrap, useModalLock
+│   │   └── motion/                 # prefersReducedMotion
 │   └── types/
-└── AGENTS.md                   # AI agent rules
+├── AGENTS.md                       # AI agent rules
+└── README.md                       # Project entry point
 ```
 
 ## Rendering flow
@@ -70,24 +73,13 @@ flowchart TD
 
 ## Internationalisation
 
+See [I18N.md](I18N.md) for the full guide (adding keys, banner behaviour, rules).
+
 - Context: [`LanguageContext.tsx`](../src/lib/i18n/LanguageContext.tsx)
 - Translations: `es.ts` + `en.ts` (shared `Translations` interface)
-- Spanish region detection: [`localeUtils.ts`](../src/lib/i18n/localeUtils.ts)
-- Suggestion banner: [`LanguagePrompt.tsx`](../src/components/common/LanguagePrompt/LanguagePrompt.tsx)
 - First visit default: **English** (`portfolio-lang` absent)
 - Persistence: `portfolio-lang`, `portfolio-lang-prompt-dismissed`
 - Inline script in layout syncs `lang` on `<html>` before paint
-
-```mermaid
-flowchart TD
-    firstVisit[First visit no portfolio-lang] --> defaultEN[Load English]
-    firstVisit --> detectES{detectSpanishRegion?}
-    detectES -->|yes| banner[LanguagePrompt banner]
-    detectES -->|no| stayEN[Stay English]
-    banner -->|accept| saveES[portfolio-lang es]
-    banner -->|dismiss| saveENDismiss[portfolio-lang en + dismissed]
-    toggle[Navbar LanguageSwitch] --> persistLang[portfolio-lang]
-```
 
 ## Project data
 
@@ -122,4 +114,6 @@ flowchart TD
 
 - Target: [Vercel](https://vercel.com)
 - Production URL: `https://julianmeoficial.vercel.app`
-- Build: `npm run build` → static/SSR output per Next.js configuration
+- Build: `npm run build` → static output per Next.js configuration
+
+Workflow and checklist: [CONTRIBUTING.md](CONTRIBUTING.md#deploy-vercel).
