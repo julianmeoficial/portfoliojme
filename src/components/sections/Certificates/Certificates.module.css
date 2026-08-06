@@ -1,0 +1,369 @@
+/* ═══════════════════════════════════════════════════════
+   CERTIFICATES — Dia-style stacked brief deck
+═══════════════════════════════════════════════════════ */
+
+.certificates {
+    padding-block: clamp(var(--space-20), 10vw, var(--space-32));
+    padding-inline: clamp(var(--space-6), 5vw, var(--space-16));
+    position: relative;
+    border-top: 1px solid var(--color-divider);
+    overflow: hidden;
+}
+
+.header {
+    margin-bottom: var(--space-16);
+    max-width: var(--content-wide);
+    margin-inline: auto;
+}
+
+.label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+    margin-bottom: var(--space-6);
+}
+
+.label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--color-text-faint);
+    display: block;
+}
+
+.heading {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    line-height: 1.05;
+    max-width: 18ch;
+    text-wrap: balance;
+}
+
+.body {
+    max-width: var(--content-default);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+/* ── Empty state ── */
+.empty {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
+    padding: clamp(var(--space-10), 6vw, var(--space-16));
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg-strong);
+    box-shadow: var(--shadow-sm);
+}
+
+.emptyIcon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-text-faint);
+    margin-bottom: var(--space-2);
+}
+
+.emptyTitle {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+}
+
+.emptyHint {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    max-width: 42ch;
+    line-height: 1.55;
+}
+
+/* ── Deck stage ── */
+.deck {
+    position: relative;
+    width: 100%;
+    min-height: clamp(28rem, 68vh, 40rem);
+    perspective: 1400px;
+    outline: none;
+}
+
+.card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transform-origin: center center;
+    will-change: transform, opacity;
+}
+
+.card[data-active='true'] {
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--neu-shadow-hover), var(--shadow-md);
+}
+
+.liquidContainer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.liquidBlob {
+    position: absolute;
+    bottom: -24%;
+    left: -12%;
+    width: 120%;
+    height: 70%;
+    background: radial-gradient(
+        ellipse at bottom center,
+        var(--color-text-faint) 0%,
+        transparent 70%
+    );
+    filter: blur(52px);
+    opacity: 0.1;
+    animation: certFlow 12s infinite alternate ease-in-out;
+    transform-origin: center bottom;
+}
+
+.liquidBlob:nth-child(2) {
+    left: 18%;
+    width: 95%;
+    height: 60%;
+    animation-delay: -4s;
+    animation-duration: 16s;
+    opacity: 0.07;
+}
+
+@keyframes certFlow {
+    0% { transform: translateY(8%) scale(1) rotate(-4deg); }
+    100% { transform: translateY(-12%) scale(1.08) rotate(4deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .liquidBlob {
+        animation: none;
+    }
+}
+
+.cardContent {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    height: 100%;
+    padding: clamp(var(--space-6), 3vw, var(--space-8));
+}
+
+.cardHeader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.issuer {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+}
+
+.issuerLabel {
+    margin-right: var(--space-2);
+    opacity: 0.7;
+}
+
+.issuedAt {
+    margin-left: var(--space-1);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.cardTitle {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-xl), 2.4vw, var(--text-2xl));
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    line-height: 1.15;
+    text-wrap: balance;
+}
+
+/* ── PDF preview ── */
+.previewShell {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--glass-border);
+    background: var(--color-surface-offset);
+    overflow: hidden;
+}
+
+.preview {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: clamp(16rem, 42vh, 24rem);
+    border: 0;
+    background: var(--color-surface-offset);
+}
+
+.previewPlaceholder {
+    width: 100%;
+    height: 100%;
+    min-height: clamp(16rem, 42vh, 24rem);
+    background: var(--color-surface-offset);
+}
+
+.openPdf {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    color: var(--color-text);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.openPdf:hover {
+    border-color: var(--glass-border-hover);
+    transform: translateY(-1px);
+}
+
+.openPdf:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+}
+
+.cardFooter {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.verifyLink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-divider);
+    padding-bottom: var(--space-1);
+    transition: border-color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.verifyLink:hover {
+    border-color: var(--color-text);
+}
+
+.verifyLink:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+}
+
+/* ── Controls ── */
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+}
+
+.navBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    color: var(--color-text);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.navBtn:hover:not(:disabled) {
+    border-color: var(--glass-border-hover);
+    transform: translateY(-2px);
+}
+
+.navBtn:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+}
+
+.navBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.counter {
+    min-width: 4.5rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary);
+}
+
+@media (max-width: 640px) {
+    .deck {
+        min-height: clamp(26rem, 72vh, 36rem);
+    }
+
+    .cardContent {
+        gap: var(--space-4);
+        padding: var(--space-5);
+    }
+
+    .preview,
+    .previewPlaceholder {
+        min-height: clamp(14rem, 38vh, 20rem);
+    }
+}

@@ -18,14 +18,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | UI | React 19, TypeScript, CSS Modules |
 | Motion | GSAP 3 + ScrollTrigger + `@gsap/react` |
 | i18n | React Context (`src/lib/i18n/`) |
-| Data | `src/data/projects.ts` (static) |
+| Data | `src/data/projects.ts`, `src/data/certificates.ts` (static) |
 
 ```
 src/
 ├── app/                  # layout, page, globals.css, loading.tsx
 ├── components/common/    # Navbar, Footer, Skeleton, Spinner, ImageWithSkeleton
-├── components/sections/  # Hero, About, Projects, Skills, Contact
-├── data/                 # projects.ts
+├── components/sections/  # Hero, About, Projects, Skills, Certificates, Contact
+├── data/                 # projects.ts, certificates.ts
 └── lib/i18n/             # LanguageContext, es.ts, en.ts, types.ts
 ```
 
@@ -138,6 +138,14 @@ Edit only [`src/data/projects.ts`](src/data/projects.ts):
 - Matching icon in `PROJECT_ICONS` in `Projects.tsx`
 
 Current projects: **SkyVault**, **SelanFlow**, **SkyGate**, **ODC Simulator**, **RLC Lab**, **Zoro Security**.
+
+## Certificate data
+
+Edit only [`src/data/certificates.ts`](src/data/certificates.ts):
+
+- `title`, `issuer`, `pdf` path, `verificationUrl`, optional `issuedAt`
+- PDFs in `public/certificates/`
+- Array may be empty — section shows empty state until entries exist
 
 ---
 

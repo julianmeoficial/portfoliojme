@@ -19,6 +19,7 @@ export interface Translations {
         about: string;
         projects: string;
         skills: string;
+        certificates: string;
         contact: string;
         cta_talk: string;
         theme_light: string;
@@ -73,6 +74,19 @@ export interface Translations {
             backend: string;
             tools: string;
         };
+    };
+    certificates: {
+        label: string;
+        heading: string;
+        empty: string;
+        empty_hint: string;
+        verify: string;
+        open_pdf: string;
+        prev: string;
+        next: string;
+        counter: string;
+        issuer_label: string;
+        preview_label: string;
     };
     contact: {
         label: string;

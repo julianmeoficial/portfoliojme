@@ -2,6 +2,24 @@
 
 Notable changes to this portfolio. For contribution workflow and conventions, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-08
+
+### Added
+
+- **Certificates section** — Dia-style stacked deck between Skills and Contact. PDFs in `public/certificates/`; metadata in `src/data/certificates.ts` (starts empty). Interactive PDF preview, verification link, GSAP stack motion, i18n + nav `#certificates`.
+
+### Files touched (Certificates)
+
+| Area | Files |
+| ---- | ----- |
+| Section UI | `Certificates.tsx`, `Certificates.module.css`, `index.ts` |
+| Data / assets | `src/data/certificates.ts`, `public/certificates/.gitkeep` |
+| Integration | `page.tsx`, `Navbar.tsx` |
+| i18n | `types.ts`, `en.ts`, `es.ts` |
+| Docs | `ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md` |
+
+---
+
 ## 2026-07
 
 ### Added

@@ -69,6 +69,15 @@ Follow existing patterns in the codebase. Detailed rules live in the docs below 
 
 Projects without screenshots (GitHub only): set `screenshots: []` — see SkyGate and Zoro Security in `projects.ts`.
 
+## Adding a certificate
+
+1. Add the PDF in `public/certificates/` (e.g. `{id}.pdf`).
+2. Add an entry in [`src/data/certificates.ts`](../src/data/certificates.ts) with `title`, `issuer`, `pdf` path (`/certificates/...`), and `verificationUrl`.
+3. Optionally set `issuedAt` (e.g. `2025-06`).
+4. Verify the deck preview, open-PDF fallback, and verification link in the Certificates section.
+
+While `certificates` is `[]`, the section shows an empty state (nav link remains available).
+
 ## CV download
 
 - PDF path: `public/cv/Julian_Martinez_Junior_SoftwareEngineer.pdf`
