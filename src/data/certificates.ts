@@ -67,7 +67,21 @@ export interface Certificate {
     courseCount?: number;
 }
 
-export const certificates: Certificate[] = [];
+export const certificates: Certificate[] = [
+    {
+        id: 'learn-english-beginning-grammar',
+        title: 'Learn English: Beginning Grammar',
+        issuer: 'University of California, Irvine',
+        category: 'coursera',
+        pdf: '/certificates/learn-english-beginning-grammar.pdf',
+        verificationUrl: 'https://coursera.org/verify/specialization/VW7VGZE1310G',
+        description: {
+            es: 'Especialización de Coursera (UC Irvine) sobre gramática inglesa básica: formas de palabras, tiempos verbales y formación de preguntas.',
+            en: 'Coursera specialization (UC Irvine) on beginning English grammar: word forms, verb tenses, and question formation.',
+        },
+        courseCount: 3,
+    },
+];
 
 /** Categories that currently have at least one certificate. */
 export function getUsedCertificateCategories(
