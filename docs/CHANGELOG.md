@@ -7,6 +7,7 @@ Notable changes to this portfolio. For contribution workflow and conventions, se
 ### Added
 
 - **Certificates section** — Dia-style stacked deck between Skills and Contact. PDFs in `public/certificates/`; metadata in `src/data/certificates.ts` (starts empty). Interactive PDF preview, verification link, GSAP stack motion, i18n + nav `#certificates`.
+- **Certificate categories** — `category` filter (`coursera`, `aws`, `google`, `meta`, `other`) plus optional `description` / `courseCount` for Coursera-style specializations.
 
 ### Files touched (Certificates)
 

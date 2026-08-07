@@ -143,7 +143,8 @@ Current projects: **SkyVault**, **SelanFlow**, **SkyGate**, **ODC Simulator**, *
 
 Edit only [`src/data/certificates.ts`](src/data/certificates.ts):
 
-- `title`, `issuer`, `pdf` path, `verificationUrl`, optional `issuedAt`
+- Required: `title`, `issuer`, `category` (`coursera` | `aws` | `google` | `meta` | `other`), `pdf` path, `verificationUrl`
+- Optional: `issuedAt`, bilingual `description`, `courseCount` (Coursera specializations)
 - PDFs in `public/certificates/`
 - Array may be empty — section shows empty state until entries exist
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { JSX, KeyboardEvent } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -13,13 +13,19 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { prefersReducedMotion, getMotionDuration } from '@/lib/motion/prefersReducedMotion';
-import { certificates } from '@/data/certificates';
-import type { Certificate } from '@/data/certificates';
+import {
+    certificates,
+    filterCertificatesByCategory,
+    getUsedCertificateCategories,
+} from '@/data/certificates';
+import type { Certificate, CertificateCategory } from '@/data/certificates';
 import styles from './Certificates.module.css';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
+
+type CategoryFilter = CertificateCategory | 'all';
 
 function fillCounter(template: string, current: number, total: number): string {
     return template
@@ -29,6 +35,11 @@ function fillCounter(template: string, current: number, total: number): string {
 
 function fillPreviewLabel(template: string, title: string): string {
     return template.replace('{title}', title);
+}
+
+function fillCourseCount(one: string, many: string, count: number): string {
+    if (count === 1) return one;
+    return many.replace('{count}', String(count));
 }
 
 /** Relative stack depth from active index (wrapped). */
@@ -60,14 +71,31 @@ function stackTransform(depth: number, peek: boolean): { x: number; y: number; s
 }
 
 export default function Certificates(): JSX.Element {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const sectionRef = useRef<HTMLElement>(null);
     const deckRef = useRef<HTMLDivElement>(null);
     const cardRefs = useRef<(HTMLElement | null)[]>([]);
+    const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
     const [activeIndex, setActiveIndex] = useState(0);
     const [peeking, setPeeking] = useState(false);
     const animatingRef = useRef(false);
-    const total = certificates.length;
+
+    const usedCategories = useMemo(
+        () => getUsedCertificateCategories(certificates),
+        [],
+    );
+
+    const visibleCertificates = useMemo(
+        () => filterCertificatesByCategory(categoryFilter, certificates),
+        [categoryFilter],
+    );
+
+    const total = visibleCertificates.length;
+
+    const categoryLabel = useCallback(
+        (category: CertificateCategory): string => t.certificates.categories[category],
+        [t],
+    );
 
     const applyStack = useCallback(
         (immediate = false): void => {
@@ -139,7 +167,7 @@ export default function Certificates(): JSX.Element {
 
     useEffect(() => {
         applyStack(true);
-    }, [applyStack]);
+    }, [applyStack, visibleCertificates]);
 
     useEffect(() => {
         if (!total) return;
@@ -182,10 +210,19 @@ export default function Certificates(): JSX.Element {
         }
     };
 
-    const active: Certificate | undefined = total ? certificates[activeIndex] : undefined;
+    const selectCategory = (next: CategoryFilter): void => {
+        if (next === categoryFilter) return;
+        setCategoryFilter(next);
+        setActiveIndex(0);
+        cardRefs.current = [];
+        animatingRef.current = false;
+    };
+
+    const active: Certificate | undefined = total ? visibleCertificates[activeIndex] : undefined;
     const counterLabel = total
         ? fillCounter(t.certificates.counter, activeIndex + 1, total)
         : '';
+    const showFilters = certificates.length > 0 && usedCategories.length > 0;
 
     return (
         <section id="certificates" ref={sectionRef} className={styles.certificates}>
@@ -199,6 +236,36 @@ export default function Certificates(): JSX.Element {
             </div>
 
             <div className={`js-certificates-body ${styles.body}`}>
+                {showFilters ? (
+                    <div
+                        className={styles.filters}
+                        role="group"
+                        aria-label={t.certificates.filter_aria}
+                    >
+                        <button
+                            type="button"
+                            className={styles.filterChip}
+                            data-active={categoryFilter === 'all' ? 'true' : 'false'}
+                            aria-pressed={categoryFilter === 'all'}
+                            onClick={() => selectCategory('all')}
+                        >
+                            {t.certificates.filter_all}
+                        </button>
+                        {usedCategories.map((cat) => (
+                            <button
+                                key={cat}
+                                type="button"
+                                className={styles.filterChip}
+                                data-active={categoryFilter === cat ? 'true' : 'false'}
+                                aria-pressed={categoryFilter === cat}
+                                onClick={() => selectCategory(cat)}
+                            >
+                                {categoryLabel(cat)}
+                            </button>
+                        ))}
+                    </div>
+                ) : null}
+
                 {total === 0 || !active ? (
                     <div className={`glass ${styles.empty}`} role="status">
                         <DocumentTextIcon className={styles.emptyIcon} aria-hidden="true" />
@@ -220,8 +287,18 @@ export default function Certificates(): JSX.Element {
                             aria-roledescription="carousel"
                             aria-label={t.certificates.label}
                         >
-                            {certificates.map((cert, index) => {
+                            {visibleCertificates.map((cert, index) => {
                                 const isActive = index === activeIndex;
+                                const description = cert.description?.[language];
+                                const courseLabel =
+                                    typeof cert.courseCount === 'number'
+                                        ? fillCourseCount(
+                                              t.certificates.courses_one,
+                                              t.certificates.courses_many,
+                                              cert.courseCount,
+                                          )
+                                        : null;
+
                                 return (
                                     <article
                                         key={cert.id}
@@ -239,18 +316,29 @@ export default function Certificates(): JSX.Element {
 
                                         <div className={styles.cardContent}>
                                             <header className={styles.cardHeader}>
-                                                <p className={styles.issuer}>
-                                                    <span className={styles.issuerLabel}>
-                                                        {t.certificates.issuer_label}
+                                                <div className={styles.metaRow}>
+                                                    <span className={styles.categoryBadge}>
+                                                        {categoryLabel(cert.category)}
                                                     </span>
-                                                    {cert.issuer}
-                                                    {cert.issuedAt ? (
-                                                        <span className={styles.issuedAt}>
-                                                            · {cert.issuedAt}
+                                                    <p className={styles.issuer}>
+                                                        <span className={styles.issuerLabel}>
+                                                            {t.certificates.issuer_label}
                                                         </span>
-                                                    ) : null}
-                                                </p>
+                                                        {cert.issuer}
+                                                        {cert.issuedAt ? (
+                                                            <span className={styles.issuedAt}>
+                                                                · {cert.issuedAt}
+                                                            </span>
+                                                        ) : null}
+                                                    </p>
+                                                </div>
                                                 <h3 className={styles.cardTitle}>{cert.title}</h3>
+                                                {description ? (
+                                                    <p className={styles.description}>{description}</p>
+                                                ) : null}
+                                                {courseLabel ? (
+                                                    <p className={styles.courseCount}>{courseLabel}</p>
+                                                ) : null}
                                             </header>
 
                                             <div className={styles.previewShell}>

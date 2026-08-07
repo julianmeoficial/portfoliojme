@@ -87,6 +87,17 @@ export interface Translations {
         counter: string;
         issuer_label: string;
         preview_label: string;
+        filter_aria: string;
+        filter_all: string;
+        courses_one: string;
+        courses_many: string;
+        categories: {
+            coursera: string;
+            aws: string;
+            google: string;
+            meta: string;
+            other: string;
+        };
     };
     contact: {
         label: string;

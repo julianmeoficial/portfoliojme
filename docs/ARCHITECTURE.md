@@ -102,10 +102,12 @@ See [I18N.md](I18N.md) for the full guide (adding keys, banner behaviour, rules)
 
 [`certificates.ts`](../src/data/certificates.ts) exports a typed `Certificate[]` array (empty until entries are added):
 
-- `id`, `title`, `issuer`, `pdf`, `verificationUrl`, optional `issuedAt`
+- `id`, `title`, `issuer`, `category`, `pdf`, `verificationUrl`, optional `issuedAt`
+- Optional specialization fields: `description` (Record ES/EN) and `courseCount` (e.g. Coursera specializations)
+- Categories: `coursera` | `aws` | `google` | `meta` | `other` — filter chips appear once entries exist
 - PDFs live in `public/certificates/` (e.g. `/certificates/{id}.pdf`)
-- Metadata (names + verification links) stays in `certificates.ts` — same split as screenshots vs `projects.ts`
-- UI: Dia-style stacked deck in [`Certificates.tsx`](../src/components/sections/Certificates/Certificates.tsx) — title, interactive PDF preview, verification link; empty state when the array is empty
+- Metadata stays in `certificates.ts` — same split as screenshots vs `projects.ts`
+- UI: Dia-style stacked deck in [`Certificates.tsx`](../src/components/sections/Certificates/Certificates.tsx) — category badge, title, optional description / course count, interactive PDF preview, verification link; empty state when the array is empty
 
 ## GSAP
 

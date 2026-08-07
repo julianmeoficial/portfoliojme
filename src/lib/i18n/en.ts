@@ -90,6 +90,17 @@ export const en: Translations = {
         counter: '{current} / {total}',
         issuer_label: 'Issued by',
         preview_label: 'Certificate preview — {title}',
+        filter_aria: 'Filter certificates by category',
+        filter_all: 'All',
+        courses_one: '1 course completed',
+        courses_many: '{count} courses completed',
+        categories: {
+            coursera: 'Coursera',
+            aws: 'AWS',
+            google: 'Google',
+            meta: 'Meta',
+            other: 'Other',
+        },
     },
     contact: {
         label: 'Get in touch',
