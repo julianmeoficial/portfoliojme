@@ -97,6 +97,7 @@ export const es: Translations = {
         expand: 'Ampliar vista previa',
         close_preview: 'Cerrar vista ampliada',
         lightbox_label: 'Certificado — {title}',
+        select_certificate: 'Ver certificado — {title}',
         categories: {
             coursera: 'Coursera',
             aws: 'AWS',

@@ -94,6 +94,7 @@ export interface Translations {
         expand: string;
         close_preview: string;
         lightbox_label: string;
+        select_certificate: string;
         categories: {
             coursera: string;
             aws: string;

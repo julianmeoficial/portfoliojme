@@ -200,6 +200,20 @@
     will-change: transform, opacity;
 }
 
+.slide[data-active='false'] {
+    cursor: pointer;
+}
+
+.slide[data-active='false'] .dragLayer {
+    cursor: pointer;
+}
+
+/* Peek cards are one-click targets; defer Expand / Open / Verify until active. */
+.slide[data-active='false'] .previewActions,
+.slide[data-active='false'] .cardFooter {
+    pointer-events: none;
+}
+
 .slideCard {
     position: relative;
     display: flex;

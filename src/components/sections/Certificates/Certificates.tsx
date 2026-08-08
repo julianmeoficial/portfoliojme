@@ -97,6 +97,7 @@ export default function Certificates(): JSX.Element {
         lastTime: number;
         velocity: number;
         dragging: boolean;
+        startSlideIndex: number | null;
     } | null>(null);
 
     const trackId = useId();
@@ -327,6 +328,11 @@ export default function Certificates(): JSX.Element {
         const target = event.target as HTMLElement;
         if (target.closest('a, button')) return;
 
+        const slide = target.closest('[data-slide-index]');
+        const startSlideIndex = slide
+            ? Number(slide.getAttribute('data-slide-index'))
+            : null;
+
         gsap.killTweensOf(track);
         animatingRef.current = false;
 
@@ -338,6 +344,7 @@ export default function Certificates(): JSX.Element {
             lastTime: performance.now(),
             velocity: 0,
             dragging: false,
+            startSlideIndex: Number.isFinite(startSlideIndex) ? startSlideIndex : null,
         };
         event.currentTarget.setPointerCapture(event.pointerId);
     };
@@ -381,13 +388,28 @@ export default function Certificates(): JSX.Element {
 
         const wasDragging = drag.dragging;
         const velocity = drag.velocity;
+        const startSlideIndex = drag.startSlideIndex;
         dragRef.current = null;
 
         if (track) {
             track.dataset.dragging = 'false';
         }
 
-        if (!wasDragging || !track) {
+        if (!wasDragging) {
+            setSnapEnabled(true);
+            // Click on a peeking (inactive) card → jump to that certificate (mouse UX).
+            if (
+                startSlideIndex !== null &&
+                startSlideIndex !== activeIndexRef.current &&
+                startSlideIndex >= 0 &&
+                startSlideIndex < total
+            ) {
+                scrollToIndex(startSlideIndex);
+            }
+            return;
+        }
+
+        if (!track) {
             setSnapEnabled(true);
             return;
         }
@@ -523,8 +545,17 @@ export default function Certificates(): JSX.Element {
                                                 slideRefs.current[index] = el;
                                             }}
                                             className={styles.slide}
+                                            data-slide-index={index}
                                             data-active={isActive ? 'true' : 'false'}
                                             aria-hidden={!isActive}
+                                            aria-label={
+                                                isActive
+                                                    ? undefined
+                                                    : fillPreviewLabel(
+                                                          t.certificates.select_certificate,
+                                                          cert.title,
+                                                      )
+                                            }
                                         >
                                             <div className={styles.slideCard}>
                                                 <div className={styles.liquidContainer} aria-hidden="true">
