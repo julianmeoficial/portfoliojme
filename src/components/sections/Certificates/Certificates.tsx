@@ -137,19 +137,21 @@ export default function Certificates(): JSX.Element {
             const rect = el.getBoundingClientRect();
             const slideCenter = rect.left + rect.width / 2;
             const distance = Math.abs(slideCenter - centerX) / Math.max(rect.width, 1);
-            const tDist = Math.min(distance, 1.2);
-            const scale = reduced ? 1 : 1 - tDist * 0.05;
-            const opacity = reduced ? 1 : Math.max(0.5, 1 - tDist * 0.4);
+            const tDist = Math.min(distance, 1);
+            // Opacity only — avoid scale on iframe ancestors (Safari flicker).
+            const opacity = reduced ? 1 : Math.max(0.55, 1 - tDist * 0.38);
 
+            gsap.killTweensOf(el);
             if (immediate || reduced) {
-                gsap.set(el, { scale, opacity });
+                gsap.set(el, { opacity, scale: 1, force3D: false });
             } else {
                 gsap.to(el, {
-                    scale,
                     opacity,
-                    duration: 0.35,
+                    scale: 1,
+                    duration: getMotionDuration(0.4),
                     ease: 'power2.out',
-                    overwrite: 'auto',
+                    overwrite: true,
+                    force3D: false,
                 });
             }
         });
@@ -178,8 +180,14 @@ export default function Certificates(): JSX.Element {
             const slide = slideRefs.current[clamped];
             if (!slide) return;
 
-            setIndexSafe(clamped);
             const targetLeft = getCenteredScrollLeft(track, slide);
+            if (Math.abs(track.scrollLeft - targetLeft) < 1 && clamped === activeIndexRef.current) {
+                setIndexSafe(clamped);
+                updatePeek(true);
+                return;
+            }
+
+            setIndexSafe(clamped);
             const reduced = prefersReducedMotion() || instant;
 
             gsap.killTweensOf(track);
@@ -195,18 +203,24 @@ export default function Certificates(): JSX.Element {
             }
 
             const distance = Math.abs(track.scrollLeft - targetLeft);
-            const duration = getMotionDuration(Math.min(0.55, 0.28 + distance / 1800));
+            const duration = getMotionDuration(
+                Math.min(0.65, Math.max(0.38, 0.32 + distance / 2200)),
+            );
 
             gsap.to(track, {
                 scrollLeft: targetLeft,
                 duration,
-                ease: 'power3.out',
+                ease: 'power2.inOut',
                 overwrite: true,
                 onUpdate: schedulePeek,
                 onComplete: () => {
-                    animatingRef.current = false;
-                    setSnapEnabled(true);
-                    updatePeek(false);
+                    // Settle exactly, then restore snap on the next frame to avoid snap fights.
+                    track.scrollLeft = targetLeft;
+                    updatePeek(true);
+                    window.requestAnimationFrame(() => {
+                        animatingRef.current = false;
+                        setSnapEnabled(true);
+                    });
                 },
             });
         },

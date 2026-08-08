@@ -201,8 +201,8 @@
     width: min(100%, 56rem);
     max-width: 100%;
     scroll-snap-align: center;
-    transform-origin: center center;
-    will-change: transform, opacity;
+    /* Opacity-only peek — scaling ancestors of <iframe> glitches in Safari. */
+    will-change: opacity;
 }
 
 .slide[data-active='false'] {
@@ -231,6 +231,8 @@
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow: var(--shadow-md);
     overflow: hidden;
+    /* Keep PDF compositing stable while the track scrolls. */
+    transform: translateZ(0);
 }
 
 .slide[data-active='true'] .slideCard {
@@ -293,9 +295,11 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-5);
     height: 100%;
-    padding: clamp(var(--space-5), 2.2vw, var(--space-7));
+    /* Prefer existing tokens only — invalid vars zero out padding in Safari. */
+    padding: var(--space-6) var(--space-8);
+    box-sizing: border-box;
 }
 
 .slideMeta {
@@ -608,8 +612,8 @@
     }
 
     .slideContent {
-        gap: var(--space-3);
-        padding: var(--space-4);
+        gap: var(--space-4);
+        padding: var(--space-5) var(--space-6);
     }
 
     .previewShell {
