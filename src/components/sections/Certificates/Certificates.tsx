@@ -38,8 +38,8 @@ if (typeof window !== 'undefined') {
 
 type CategoryFilter = CertificateCategory | 'all';
 
-const SWIPE_THRESHOLD = 48;
-const DRAG_LOCK_PX = 8;
+const DRAG_LOCK_PX = 6;
+const VELOCITY_FLICK = 0.45;
 
 function fillCounter(template: string, current: number, total: number): string {
     return template
@@ -56,18 +56,47 @@ function fillCourseCount(one: string, many: string, count: number): string {
     return many.replace('{count}', String(count));
 }
 
+function getClosestIndex(
+    track: HTMLDivElement,
+    slides: (HTMLElement | null)[],
+): number {
+    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+    let closest = 0;
+    let closestDist = Infinity;
+
+    slides.forEach((el, i) => {
+        if (!el) return;
+        const slideCenter = el.offsetLeft + el.offsetWidth / 2;
+        const dist = Math.abs(slideCenter - trackCenter);
+        if (dist < closestDist) {
+            closestDist = dist;
+            closest = i;
+        }
+    });
+
+    return closest;
+}
+
+function getCenteredScrollLeft(track: HTMLDivElement, slide: HTMLElement): number {
+    return slide.offsetLeft - (track.clientWidth - slide.offsetWidth) / 2;
+}
+
 export default function Certificates(): JSX.Element {
     const { t, language } = useLanguage();
     const sectionRef = useRef<HTMLElement>(null);
     const trackRef = useRef<HTMLDivElement>(null);
     const slideRefs = useRef<(HTMLElement | null)[]>([]);
-    const scrollingProgrammatically = useRef(false);
+    const activeIndexRef = useRef(0);
+    const animatingRef = useRef(false);
+    const peekRaf = useRef<number | null>(null);
     const dragRef = useRef<{
         pointerId: number;
         startX: number;
         startScroll: number;
+        lastX: number;
+        lastTime: number;
+        velocity: number;
         dragging: boolean;
-        moved: boolean;
     } | null>(null);
 
     const trackId = useId();
@@ -92,91 +121,98 @@ export default function Certificates(): JSX.Element {
         [t],
     );
 
-    const updatePeek = useCallback((): void => {
+    const setIndexSafe = useCallback((index: number): void => {
+        activeIndexRef.current = index;
+        setActiveIndex((prev) => (prev === index ? prev : index));
+    }, []);
+
+    const updatePeek = useCallback((immediate = true): void => {
         const track = trackRef.current;
         if (!track || !total) return;
 
         const reduced = prefersReducedMotion();
-        const trackRect = track.getBoundingClientRect();
-        const centerX = trackRect.left + trackRect.width / 2;
+        const centerX = track.getBoundingClientRect().left + track.clientWidth / 2;
 
-        slideRefs.current.forEach((el, i) => {
+        slideRefs.current.forEach((el) => {
             if (!el) return;
             const rect = el.getBoundingClientRect();
             const slideCenter = rect.left + rect.width / 2;
             const distance = Math.abs(slideCenter - centerX) / Math.max(rect.width, 1);
-            const tDist = Math.min(distance, 1.35);
-            const scale = reduced ? (i === activeIndex ? 1 : 0.96) : 1 - tDist * 0.06;
-            const opacity = reduced ? (i === activeIndex ? 1 : 0.55) : Math.max(0.42, 1 - tDist * 0.45);
+            const tDist = Math.min(distance, 1.2);
+            const scale = reduced ? 1 : 1 - tDist * 0.05;
+            const opacity = reduced ? 1 : Math.max(0.5, 1 - tDist * 0.4);
 
-            gsap.to(el, {
-                scale,
-                opacity,
-                duration: reduced ? 0 : 0.28,
-                ease: 'power2.out',
-                overwrite: 'auto',
-            });
+            if (immediate || reduced) {
+                gsap.set(el, { scale, opacity });
+            } else {
+                gsap.to(el, {
+                    scale,
+                    opacity,
+                    duration: 0.35,
+                    ease: 'power2.out',
+                    overwrite: 'auto',
+                });
+            }
         });
-    }, [activeIndex, total]);
+    }, [total]);
+
+    const schedulePeek = useCallback((): void => {
+        if (peekRaf.current !== null) return;
+        peekRaf.current = window.requestAnimationFrame(() => {
+            peekRaf.current = null;
+            updatePeek(true);
+        });
+    }, [updatePeek]);
+
+    const setSnapEnabled = useCallback((enabled: boolean): void => {
+        const track = trackRef.current;
+        if (!track) return;
+        track.dataset.snap = enabled ? 'true' : 'false';
+    }, []);
 
     const scrollToIndex = useCallback(
         (index: number, instant = false): void => {
             const track = trackRef.current;
             if (!track || !total) return;
 
-            const clamped = ((index % total) + total) % total;
+            const clamped = Math.max(0, Math.min(index, total - 1));
             const slide = slideRefs.current[clamped];
             if (!slide) return;
 
-            setActiveIndex(clamped);
-            scrollingProgrammatically.current = true;
-
+            setIndexSafe(clamped);
+            const targetLeft = getCenteredScrollLeft(track, slide);
             const reduced = prefersReducedMotion() || instant;
-            const targetLeft = slide.offsetLeft - (track.clientWidth - slide.offsetWidth) / 2;
+
+            gsap.killTweensOf(track);
+            animatingRef.current = true;
+            setSnapEnabled(false);
 
             if (reduced) {
                 track.scrollLeft = targetLeft;
-                scrollingProgrammatically.current = false;
-                updatePeek();
+                animatingRef.current = false;
+                setSnapEnabled(true);
+                updatePeek(true);
                 return;
             }
 
+            const distance = Math.abs(track.scrollLeft - targetLeft);
+            const duration = getMotionDuration(Math.min(0.55, 0.28 + distance / 1800));
+
             gsap.to(track, {
                 scrollLeft: targetLeft,
-                duration: getMotionDuration(0.55),
+                duration,
                 ease: 'power3.out',
-                overwrite: 'auto',
-                onUpdate: updatePeek,
+                overwrite: true,
+                onUpdate: schedulePeek,
                 onComplete: () => {
-                    scrollingProgrammatically.current = false;
-                    updatePeek();
+                    animatingRef.current = false;
+                    setSnapEnabled(true);
+                    updatePeek(false);
                 },
             });
         },
-        [total, updatePeek],
+        [schedulePeek, setIndexSafe, setSnapEnabled, total, updatePeek],
     );
-
-    const syncIndexFromScroll = useCallback((): void => {
-        const track = trackRef.current;
-        if (!track || !total || scrollingProgrammatically.current) return;
-
-        const trackCenter = track.scrollLeft + track.clientWidth / 2;
-        let closest = 0;
-        let closestDist = Infinity;
-
-        slideRefs.current.forEach((el, i) => {
-            if (!el) return;
-            const slideCenter = el.offsetLeft + el.offsetWidth / 2;
-            const dist = Math.abs(slideCenter - trackCenter);
-            if (dist < closestDist) {
-                closestDist = dist;
-                closest = i;
-            }
-        });
-
-        setActiveIndex((prev) => (prev === closest ? prev : closest));
-        updatePeek();
-    }, [total, updatePeek]);
 
     useGSAP(
         () => {
@@ -218,60 +254,58 @@ export default function Certificates(): JSX.Element {
         if (!track) return;
 
         const onScroll = (): void => {
-            syncIndexFromScroll();
+            if (animatingRef.current || dragRef.current?.dragging) {
+                schedulePeek();
+                return;
+            }
+            const closest = getClosestIndex(track, slideRefs.current);
+            setIndexSafe(closest);
+            schedulePeek();
         };
 
         track.addEventListener('scroll', onScroll, { passive: true });
-        updatePeek();
+        setSnapEnabled(true);
+        updatePeek(true);
 
-        return () => track.removeEventListener('scroll', onScroll);
-    }, [syncIndexFromScroll, updatePeek, visibleCertificates]);
+        return () => {
+            track.removeEventListener('scroll', onScroll);
+            if (peekRaf.current !== null) {
+                window.cancelAnimationFrame(peekRaf.current);
+            }
+        };
+    }, [schedulePeek, setIndexSafe, setSnapEnabled, updatePeek, visibleCertificates]);
 
     useEffect(() => {
         const onResize = (): void => {
-            scrollToIndex(activeIndex, true);
+            scrollToIndex(activeIndexRef.current, true);
         };
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
-    }, [activeIndex, scrollToIndex]);
+    }, [scrollToIndex]);
 
     const go = useCallback(
         (delta: number): void => {
-            if (!total) return;
-            scrollToIndex(activeIndex + delta);
+            if (!total || animatingRef.current) return;
+            scrollToIndex(activeIndexRef.current + delta);
         },
-        [activeIndex, scrollToIndex, total],
+        [scrollToIndex, total],
     );
 
     const selectCategory = (next: CategoryFilter): void => {
         if (next === categoryFilter) return;
         setCategoryFilter(next);
-        setActiveIndex(0);
+        setIndexSafe(0);
         setLightboxOpen(false);
         slideRefs.current = [];
+        animatingRef.current = false;
 
         requestAnimationFrame(() => {
             const track = trackRef.current;
-            if (track) {
-                if (prefersReducedMotion()) {
-                    track.scrollLeft = 0;
-                    updatePeek();
-                    return;
-                }
-                gsap.fromTo(
-                    track,
-                    { opacity: 0.35 },
-                    {
-                        opacity: 1,
-                        duration: getMotionDuration(0.35),
-                        ease: 'power2.out',
-                        onStart: () => {
-                            track.scrollLeft = 0;
-                        },
-                        onComplete: updatePeek,
-                    },
-                );
-            }
+            if (!track) return;
+            gsap.killTweensOf(track);
+            track.scrollLeft = 0;
+            setSnapEnabled(true);
+            updatePeek(true);
         });
     };
 
@@ -293,12 +327,17 @@ export default function Certificates(): JSX.Element {
         const target = event.target as HTMLElement;
         if (target.closest('a, button')) return;
 
+        gsap.killTweensOf(track);
+        animatingRef.current = false;
+
         dragRef.current = {
             pointerId: event.pointerId,
             startX: event.clientX,
             startScroll: track.scrollLeft,
+            lastX: event.clientX,
+            lastTime: performance.now(),
+            velocity: 0,
             dragging: false,
-            moved: false,
         };
         event.currentTarget.setPointerCapture(event.pointerId);
     };
@@ -308,23 +347,30 @@ export default function Certificates(): JSX.Element {
         const track = trackRef.current;
         if (!drag || !track || drag.pointerId !== event.pointerId) return;
 
+        const now = performance.now();
         const deltaX = event.clientX - drag.startX;
+        const dt = Math.max(now - drag.lastTime, 1);
+        const frameDelta = event.clientX - drag.lastX;
+        drag.velocity = frameDelta / dt;
+        drag.lastX = event.clientX;
+        drag.lastTime = now;
+
         if (!drag.dragging && Math.abs(deltaX) > DRAG_LOCK_PX) {
             drag.dragging = true;
-            scrollingProgrammatically.current = true;
-            gsap.killTweensOf(track);
+            setSnapEnabled(false);
+            track.dataset.dragging = 'true';
         }
 
         if (!drag.dragging) return;
 
-        drag.moved = true;
         track.scrollLeft = drag.startScroll - deltaX;
-        updatePeek();
+        schedulePeek();
         event.preventDefault();
     };
 
     const endDrag = (event: ReactPointerEvent<HTMLDivElement>): void => {
         const drag = dragRef.current;
+        const track = trackRef.current;
         if (!drag || drag.pointerId !== event.pointerId) return;
 
         try {
@@ -333,17 +379,25 @@ export default function Certificates(): JSX.Element {
             /* already released */
         }
 
-        const deltaX = event.clientX - drag.startX;
+        const wasDragging = drag.dragging;
+        const velocity = drag.velocity;
         dragRef.current = null;
-        scrollingProgrammatically.current = false;
 
-        if (!drag.dragging) return;
-
-        if (Math.abs(deltaX) >= SWIPE_THRESHOLD) {
-            scrollToIndex(activeIndex + (deltaX > 0 ? -1 : 1));
-        } else {
-            scrollToIndex(activeIndex);
+        if (track) {
+            track.dataset.dragging = 'false';
         }
+
+        if (!wasDragging || !track) {
+            setSnapEnabled(true);
+            return;
+        }
+
+        let target = getClosestIndex(track, slideRefs.current);
+        if (Math.abs(velocity) > VELOCITY_FLICK) {
+            target += velocity > 0 ? -1 : 1;
+        }
+
+        scrollToIndex(target);
     };
 
     const counterLabel = total
@@ -414,10 +468,37 @@ export default function Certificates(): JSX.Element {
                                 {counterLabel}
                             </p>
 
+                            {total > 1 ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        className={`${styles.sideNav} ${styles.sideNavPrev}`}
+                                        onClick={() => go(-1)}
+                                        aria-label={t.certificates.prev}
+                                        aria-controls={trackId}
+                                        disabled={activeIndex <= 0}
+                                    >
+                                        <ArrowLeftIcon aria-hidden="true" width={18} height={18} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`${styles.sideNav} ${styles.sideNavNext}`}
+                                        onClick={() => go(1)}
+                                        aria-label={t.certificates.next}
+                                        aria-controls={trackId}
+                                        disabled={activeIndex >= total - 1}
+                                    >
+                                        <ArrowRightIcon aria-hidden="true" width={18} height={18} />
+                                    </button>
+                                </>
+                            ) : null}
+
                             <div
                                 ref={trackRef}
                                 id={trackId}
                                 className={styles.track}
+                                data-snap="true"
+                                data-dragging="false"
                                 onPointerDown={onDragPointerDown}
                                 onPointerMove={onDragPointerMove}
                                 onPointerUp={endDrag}
@@ -425,7 +506,6 @@ export default function Certificates(): JSX.Element {
                             >
                                 {visibleCertificates.map((cert, index) => {
                                     const isActive = index === activeIndex;
-                                    const isNear = Math.abs(index - activeIndex) <= 1;
                                     const description = cert.description?.[language];
                                     const courseLabel =
                                         typeof cert.courseCount === 'number'
@@ -480,28 +560,20 @@ export default function Certificates(): JSX.Element {
                                                     </header>
 
                                                     <div className={styles.previewShell}>
-                                                        {isNear ? (
-                                                            <iframe
-                                                                className={styles.preview}
-                                                                src={`${cert.pdf}#view=FitH`}
-                                                                title={fillPreviewLabel(
-                                                                    t.certificates.preview_label,
-                                                                    cert.title,
-                                                                )}
-                                                                loading={isActive ? 'eager' : 'lazy'}
-                                                                tabIndex={isActive ? 0 : -1}
-                                                            />
-                                                        ) : (
-                                                            <div
-                                                                className={styles.previewPlaceholder}
-                                                                aria-hidden="true"
-                                                            />
-                                                        )}
+                                                        <iframe
+                                                            className={styles.preview}
+                                                            src={`${cert.pdf}#view=FitH`}
+                                                            title={fillPreviewLabel(
+                                                                t.certificates.preview_label,
+                                                                cert.title,
+                                                            )}
+                                                            loading={index === 0 ? 'eager' : 'lazy'}
+                                                            tabIndex={isActive ? 0 : -1}
+                                                        />
 
                                                         <div
                                                             className={styles.dragLayer}
                                                             aria-hidden="true"
-                                                            data-active={isActive ? 'true' : 'false'}
                                                         />
 
                                                         <div className={styles.previewActions}>
@@ -509,7 +581,7 @@ export default function Certificates(): JSX.Element {
                                                                 type="button"
                                                                 className={styles.actionBtn}
                                                                 onClick={() => {
-                                                                    setActiveIndex(index);
+                                                                    setIndexSafe(index);
                                                                     setLightboxOpen(true);
                                                                 }}
                                                                 tabIndex={isActive ? 0 : -1}
@@ -565,17 +637,6 @@ export default function Certificates(): JSX.Element {
                         </div>
 
                         <div className={styles.controls}>
-                            <button
-                                type="button"
-                                className={styles.navBtn}
-                                onClick={() => go(-1)}
-                                aria-label={t.certificates.prev}
-                                aria-controls={trackId}
-                                disabled={total < 2}
-                            >
-                                <ArrowLeftIcon aria-hidden="true" width={18} height={18} />
-                            </button>
-
                             <div className={styles.pager}>
                                 <p className={styles.counter} aria-hidden="true">
                                     {counterLabel}
@@ -601,17 +662,6 @@ export default function Certificates(): JSX.Element {
                                     </div>
                                 ) : null}
                             </div>
-
-                            <button
-                                type="button"
-                                className={styles.navBtn}
-                                onClick={() => go(1)}
-                                aria-label={t.certificates.next}
-                                aria-controls={trackId}
-                                disabled={total < 2}
-                            >
-                                <ArrowRightIcon aria-hidden="true" width={18} height={18} />
-                            </button>
                         </div>
 
                         {lightboxOpen ? (
