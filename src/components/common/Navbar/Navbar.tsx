@@ -10,7 +10,7 @@ import { prefersReducedMotion, getMotionDuration } from '@/lib/motion/prefersRed
 import { useTheme } from '@/lib/theme/useTheme';
 import LanguageSwitch from '../LanguageSwitch';
 import styles from './Navbar.module.css';
-const NAV_HREFS = ['#home', '#about', '#projects', '#skills', '#contact'] as const;
+const NAV_HREFS = ['#home', '#about', '#projects', '#skills', '#certificates', '#contact'] as const;
 type NavHref = (typeof NAV_HREFS)[number];
 
 function SunIcon(): JSX.Element {
@@ -83,6 +83,7 @@ export default function Navbar(): JSX.Element {
         { label: t.nav.about, href: '#about' },
         { label: t.nav.projects, href: '#projects' },
         { label: t.nav.skills, href: '#skills' },
+        { label: t.nav.certificates, href: '#certificates' },
         { label: t.nav.contact, href: '#contact' },
     ];
 

@@ -10,6 +10,7 @@ For contribution workflow and adding projects, see [CONTRIBUTING.md](CONTRIBUTIN
 portfolio/
 ├── public/
 │   ├── cv/                         # CV PDF for About download CTA
+│   ├── certificates/               # Certificate PDFs for Certificates deck
 │   └── screenshots/                # Project screenshots (.webp or .png)
 ├── docs/                           # Technical documentation (see docs/README.md)
 ├── src/
@@ -20,9 +21,10 @@ portfolio/
 │   │   └── globals.css             # Tokens and global reset
 │   ├── components/
 │   │   ├── common/                 # Navbar, Footer, loading primitives
-│   │   └── sections/               # Hero, About, Projects, Skills, Contact
+│   │   └── sections/               # Hero, About, Projects, Skills, Certificates, Contact
 │   ├── data/
-│   │   └── projects.ts             # Static project data
+│   │   ├── projects.ts             # Static project data
+│   │   └── certificates.ts         # Static certificate metadata (PDFs in public/)
 │   ├── lib/
 │   │   ├── i18n/                   # Context + ES/EN translations + localeUtils
 │   │   ├── theme/                  # themeUtils + useTheme (auto/manual)
@@ -46,6 +48,7 @@ flowchart TD
     about[About]
     projects[Projects]
     skills[Skills]
+    certificates[Certificates]
     contact[Contact]
     footer[Footer]
 
@@ -57,6 +60,7 @@ flowchart TD
     page --> about
     page --> projects
     page --> skills
+    page --> certificates
     page --> contact
     page --> footer
 ```
@@ -68,7 +72,7 @@ flowchart TD
 | `app/` | Routing, SEO metadata, global layout |
 | `components/sections/` | Landing sections (client components with GSAP) |
 | `components/common/` | Shared UI (navbar, footer, skeleton, spinner) |
-| `data/` | Typed static content (projects) |
+| `data/` | Typed static content (projects, certificates) |
 | `lib/i18n/` | Internationalisation via React Context |
 
 ## Internationalisation
@@ -93,6 +97,17 @@ See [I18N.md](I18N.md) for the full guide (adding keys, banner behaviour, rules)
 ## Skills
 
 [`Skills.tsx`](../src/components/sections/Skills/Skills.tsx) defines `SKILL_CATEGORIES` (literal chips, not i18n). Categories: `languages`, `frontend`, `backend`, `tools`. Category labels via `t.skills.categories.*`. Source of truth for the stack: Tech Stack section of the author's GitHub README.
+
+## Certificates
+
+[`certificates.ts`](../src/data/certificates.ts) exports a typed `Certificate[]` array (empty until entries are added):
+
+- `id`, `title`, `issuer`, `category`, `pdf`, `verificationUrl`, optional `issuedAt`
+- Optional specialization fields: `description` (Record ES/EN) and `courseCount` (e.g. Coursera specializations)
+- Categories: `coursera` | `aws` | `google` | `meta` | `other` — filter chips appear once entries exist
+- PDFs live in `public/certificates/` (e.g. `/certificates/{id}.pdf`)
+- Metadata stays in `certificates.ts` — same split as screenshots vs `projects.ts`
+- UI: Dia-style stacked deck in [`Certificates.tsx`](../src/components/sections/Certificates/Certificates.tsx) — category badge, title, optional description / course count, interactive PDF preview, verification link; empty state when the array is empty
 
 ## GSAP
 

@@ -19,6 +19,7 @@ export interface Translations {
         about: string;
         projects: string;
         skills: string;
+        certificates: string;
         contact: string;
         cta_talk: string;
         theme_light: string;
@@ -72,6 +73,33 @@ export interface Translations {
             frontend: string;
             backend: string;
             tools: string;
+        };
+    };
+    certificates: {
+        label: string;
+        heading: string;
+        empty: string;
+        empty_hint: string;
+        verify: string;
+        open_pdf: string;
+        prev: string;
+        next: string;
+        counter: string;
+        issuer_label: string;
+        preview_label: string;
+        filter_aria: string;
+        filter_all: string;
+        courses_one: string;
+        courses_many: string;
+        expand: string;
+        close_preview: string;
+        lightbox_label: string;
+        categories: {
+            coursera: string;
+            aws: string;
+            google: string;
+            meta: string;
+            other: string;
         };
     };
     contact: {
