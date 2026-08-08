@@ -162,23 +162,23 @@
 .track {
     display: flex;
     align-items: stretch;
-    gap: clamp(var(--space-4), 2.5vw, var(--space-8));
+    gap: clamp(var(--space-5), 3vw, var(--space-10));
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: none;
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding-block: var(--space-2);
-    padding-inline: clamp(var(--space-4), 8vw, 12%);
-    cursor: grab;
+    padding-block: var(--space-3);
+    padding-inline: clamp(var(--space-4), 6vw, 10%);
+    cursor: default;
     touch-action: pan-y;
 }
 
 .track[data-snap='true'] {
     scroll-snap-type: x mandatory;
     scroll-snap-stop: always;
-    scroll-padding-inline: clamp(var(--space-4), 8vw, 12%);
+    scroll-padding-inline: clamp(var(--space-4), 6vw, 10%);
 }
 
 .track[data-dragging='true'] {
@@ -187,13 +187,18 @@
     user-select: none;
 }
 
+.track[data-dragging='true'] .hitZone,
+.track[data-dragging='true'] .dragLayer {
+    cursor: grabbing;
+}
+
 .track::-webkit-scrollbar {
     display: none;
 }
 
 .slide {
-    flex: 0 0 min(100%, 48rem);
-    width: min(100%, 48rem);
+    flex: 0 0 min(100%, 56rem);
+    width: min(100%, 56rem);
     max-width: 100%;
     scroll-snap-align: center;
     transform-origin: center center;
@@ -290,13 +295,14 @@
     flex-direction: column;
     gap: var(--space-4);
     height: 100%;
-    padding: clamp(var(--space-4), 2vw, var(--space-6));
+    padding: clamp(var(--space-5), 2.2vw, var(--space-7));
 }
 
 .slideMeta {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: var(--space-2);
+    flex-shrink: 0;
 }
 
 .metaRow {
@@ -342,7 +348,7 @@
 
 .cardTitle {
     font-family: var(--font-display);
-    font-size: clamp(var(--text-lg), 2.2vw, var(--text-2xl));
+    font-size: clamp(var(--text-xl), 2.4vw, var(--text-2xl));
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--color-text);
@@ -354,7 +360,7 @@
     font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--color-text-secondary);
-    max-width: 58ch;
+    max-width: 62ch;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -369,15 +375,17 @@
     color: var(--color-text-faint);
 }
 
-/* ── PDF preview — sized to keep nav in viewport ── */
+/* ── PDF preview — wide, with room to breathe ── */
 .previewShell {
     position: relative;
-    flex: 1;
-    min-height: clamp(16rem, 42vh, 28rem);
+    width: 100%;
+    aspect-ratio: 1.414 / 1;
+    max-height: min(52vh, 36rem);
     border-radius: var(--radius-xl);
     border: 1px solid var(--glass-border);
-    background: var(--color-surface-offset);
+    background: var(--color-surface);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 
 .preview,
@@ -385,9 +393,8 @@
     display: block;
     width: 100%;
     height: 100%;
-    min-height: clamp(16rem, 42vh, 28rem);
     border: 0;
-    background: var(--color-surface-offset);
+    background: var(--color-surface);
     pointer-events: none;
 }
 
@@ -396,18 +403,51 @@
     inset: 0;
     z-index: 1;
     touch-action: none;
-    cursor: grab;
+    cursor: pointer;
+}
+
+/* Gallery hit zones on active certificate (cursor + hover affordance) */
+.hitZone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 42%;
+    z-index: 2;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.hitPrev {
+    left: 0;
+    background: linear-gradient(to right, var(--glass-bg), transparent);
+    opacity: 0;
+}
+
+.hitNext {
+    right: 0;
+    background: linear-gradient(to left, var(--glass-bg), transparent);
+    opacity: 0;
+}
+
+.previewShell:hover .hitZone:not([data-disabled='true']) {
+    opacity: 1;
+}
+
+.hitZone[data-disabled='true'] {
+    pointer-events: none;
+    opacity: 0;
+    cursor: default;
 }
 
 .previewActions {
     position: absolute;
-    right: var(--space-3);
-    bottom: var(--space-3);
+    right: var(--space-4);
+    bottom: var(--space-4);
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: var(--space-2);
-    z-index: 2;
+    z-index: 3;
 }
 
 .actionBtn {
@@ -443,6 +483,7 @@
 .cardFooter {
     display: flex;
     justify-content: flex-start;
+    flex-shrink: 0;
 }
 
 .verifyLink {
@@ -468,51 +509,7 @@
     border-radius: var(--radius-sm);
 }
 
-/* ── Side nav (always visible with the card) ── */
-.sideNav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 5;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg-strong);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    color: var(--color-text);
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    transition: border-color var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
-}
-
-.sideNav:hover:not(:disabled) {
-    border-color: var(--glass-border-hover);
-}
-
-.sideNav:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: 3px;
-}
-
-.sideNav:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.sideNavPrev {
-    left: clamp(var(--space-2), 1.5vw, var(--space-4));
-}
-
-.sideNavNext {
-    right: clamp(var(--space-2), 1.5vw, var(--space-4));
-}
-
-/* ── Controls (compact pager under deck) ── */
+/* ── Controls (dots + counter) ── */
 .controls {
     display: flex;
     align-items: center;
@@ -570,35 +567,26 @@
 /* ── Responsive ── */
 @media (min-width: 640px) {
     .slide {
-        flex-basis: min(90%, 44rem);
-        width: min(90%, 44rem);
+        flex-basis: min(92%, 52rem);
+        width: min(92%, 52rem);
     }
 }
 
 @media (min-width: 1024px) {
     .track,
     .track[data-snap='true'] {
-        scroll-padding-inline: max(var(--space-10), calc((100% - 46rem) / 2));
-        padding-inline: max(var(--space-10), calc((100% - 46rem) / 2));
+        scroll-padding-inline: max(var(--space-8), calc((100% - 58rem) / 2));
+        padding-inline: max(var(--space-8), calc((100% - 58rem) / 2));
     }
 
     .slide {
-        flex-basis: min(72%, 46rem);
-        width: min(72%, 46rem);
+        flex-basis: min(86%, 58rem);
+        width: min(86%, 58rem);
     }
 
-    .previewShell,
-    .preview,
-    .previewPlaceholder {
-        min-height: clamp(18rem, 38vh, 30rem);
-    }
-
-    .sideNavPrev {
-        left: var(--space-3);
-    }
-
-    .sideNavNext {
-        right: var(--space-3);
+    .previewShell {
+        aspect-ratio: 1.414 / 1;
+        max-height: min(56vh, 38rem);
     }
 
     .description {
@@ -624,10 +612,9 @@
         padding: var(--space-4);
     }
 
-    .previewShell,
-    .preview,
-    .previewPlaceholder {
-        min-height: clamp(14rem, 40vh, 24rem);
+    .previewShell {
+        aspect-ratio: 1.2 / 1;
+        max-height: min(48vh, 26rem);
     }
 
     .previewActions {
@@ -641,19 +628,8 @@
         justify-content: center;
     }
 
-    .sideNav {
-        width: 2.5rem;
-        height: 2.5rem;
-        top: auto;
-        bottom: calc(var(--space-4) + 2.75rem);
-        transform: none;
-    }
-
-    .sideNavPrev {
-        left: var(--space-3);
-    }
-
-    .sideNavNext {
-        right: var(--space-3);
+    /* On touch, prefer swipe; hit zones still work but narrower */
+    .hitZone {
+        width: 28%;
     }
 }

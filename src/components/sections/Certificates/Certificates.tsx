@@ -15,8 +15,6 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-    ArrowLeftIcon,
-    ArrowRightIcon,
     ArrowTopRightOnSquareIcon,
     ArrowsPointingOutIcon,
     DocumentTextIcon,
@@ -397,14 +395,29 @@ export default function Certificates(): JSX.Element {
 
         if (!wasDragging) {
             setSnapEnabled(true);
-            // Click on a peeking (inactive) card → jump to that certificate (mouse UX).
+
+            // Gallery click: peek card → that cert; active card left/right half → prev/next.
             if (
                 startSlideIndex !== null &&
-                startSlideIndex !== activeIndexRef.current &&
                 startSlideIndex >= 0 &&
                 startSlideIndex < total
             ) {
-                scrollToIndex(startSlideIndex);
+                if (startSlideIndex !== activeIndexRef.current) {
+                    scrollToIndex(startSlideIndex);
+                } else if (total > 1) {
+                    const slide = slideRefs.current[startSlideIndex];
+                    if (slide) {
+                        const rect = slide.getBoundingClientRect();
+                        const mid = rect.left + rect.width / 2;
+                        if (drag.startX < mid) {
+                            if (activeIndexRef.current > 0) {
+                                scrollToIndex(activeIndexRef.current - 1);
+                            }
+                        } else if (activeIndexRef.current < total - 1) {
+                            scrollToIndex(activeIndexRef.current + 1);
+                        }
+                    }
+                }
             }
             return;
         }
@@ -489,31 +502,6 @@ export default function Certificates(): JSX.Element {
                             <p className={styles.srOnly} aria-live="polite" aria-atomic="true">
                                 {counterLabel}
                             </p>
-
-                            {total > 1 ? (
-                                <>
-                                    <button
-                                        type="button"
-                                        className={`${styles.sideNav} ${styles.sideNavPrev}`}
-                                        onClick={() => go(-1)}
-                                        aria-label={t.certificates.prev}
-                                        aria-controls={trackId}
-                                        disabled={activeIndex <= 0}
-                                    >
-                                        <ArrowLeftIcon aria-hidden="true" width={18} height={18} />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`${styles.sideNav} ${styles.sideNavNext}`}
-                                        onClick={() => go(1)}
-                                        aria-label={t.certificates.next}
-                                        aria-controls={trackId}
-                                        disabled={activeIndex >= total - 1}
-                                    >
-                                        <ArrowRightIcon aria-hidden="true" width={18} height={18} />
-                                    </button>
-                                </>
-                            ) : null}
 
                             <div
                                 ref={trackRef}
@@ -606,6 +594,21 @@ export default function Certificates(): JSX.Element {
                                                             className={styles.dragLayer}
                                                             aria-hidden="true"
                                                         />
+
+                                                        {isActive && total > 1 ? (
+                                                            <>
+                                                                <div
+                                                                    className={`${styles.hitZone} ${styles.hitPrev}`}
+                                                                    aria-hidden="true"
+                                                                    data-disabled={activeIndex <= 0 ? 'true' : 'false'}
+                                                                />
+                                                                <div
+                                                                    className={`${styles.hitZone} ${styles.hitNext}`}
+                                                                    aria-hidden="true"
+                                                                    data-disabled={activeIndex >= total - 1 ? 'true' : 'false'}
+                                                                />
+                                                            </>
+                                                        ) : null}
 
                                                         <div className={styles.previewActions}>
                                                             <button
