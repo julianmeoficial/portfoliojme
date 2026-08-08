@@ -1,7 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { JSX, KeyboardEvent } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useId,
+    useMemo,
+    useRef,
+    useState,
+    type JSX,
+    type KeyboardEvent,
+    type PointerEvent as ReactPointerEvent,
+} from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,6 +18,7 @@ import {
     ArrowLeftIcon,
     ArrowRightIcon,
     ArrowTopRightOnSquareIcon,
+    ArrowsPointingOutIcon,
     DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
@@ -18,7 +28,8 @@ import {
     filterCertificatesByCategory,
     getUsedCertificateCategories,
 } from '@/data/certificates';
-import type { Certificate, CertificateCategory } from '@/data/certificates';
+import type { CertificateCategory } from '@/data/certificates';
+import PdfLightbox from './PdfLightbox';
 import styles from './Certificates.module.css';
 
 if (typeof window !== 'undefined') {
@@ -26,6 +37,9 @@ if (typeof window !== 'undefined') {
 }
 
 type CategoryFilter = CertificateCategory | 'all';
+
+const SWIPE_THRESHOLD = 48;
+const DRAG_LOCK_PX = 8;
 
 function fillCounter(template: string, current: number, total: number): string {
     return template
@@ -42,43 +56,24 @@ function fillCourseCount(one: string, many: string, count: number): string {
     return many.replace('{count}', String(count));
 }
 
-/** Relative stack depth from active index (wrapped). */
-function stackDepth(index: number, active: number, total: number): number {
-    let d = index - active;
-    if (d > total / 2) d -= total;
-    if (d < -total / 2) d += total;
-    return d;
-}
-
-function stackTransform(depth: number, peek: boolean): { x: number; y: number; scale: number; rotate: number; opacity: number; z: number } {
-    if (depth === 0) {
-        return { x: 0, y: 0, scale: 1, rotate: 0, opacity: 1, z: 30 };
-    }
-
-    const abs = Math.abs(depth);
-    const sign = depth > 0 ? 1 : -1;
-    const peekBoost = peek ? 1.35 : 1;
-    const capped = Math.min(abs, 3);
-
-    return {
-        x: sign * capped * 14 * peekBoost,
-        y: capped * 18 * peekBoost + (peek ? capped * 6 : 0),
-        scale: 1 - capped * 0.045,
-        rotate: sign * capped * (peek ? 3.2 : 1.8),
-        opacity: Math.max(0.35, 1 - capped * 0.22),
-        z: 30 - abs,
-    };
-}
-
 export default function Certificates(): JSX.Element {
     const { t, language } = useLanguage();
     const sectionRef = useRef<HTMLElement>(null);
-    const deckRef = useRef<HTMLDivElement>(null);
-    const cardRefs = useRef<(HTMLElement | null)[]>([]);
+    const trackRef = useRef<HTMLDivElement>(null);
+    const slideRefs = useRef<(HTMLElement | null)[]>([]);
+    const scrollingProgrammatically = useRef(false);
+    const dragRef = useRef<{
+        pointerId: number;
+        startX: number;
+        startScroll: number;
+        dragging: boolean;
+        moved: boolean;
+    } | null>(null);
+
+    const trackId = useId();
     const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
     const [activeIndex, setActiveIndex] = useState(0);
-    const [peeking, setPeeking] = useState(false);
-    const animatingRef = useRef(false);
+    const [lightboxOpen, setLightboxOpen] = useState(false);
 
     const usedCategories = useMemo(
         () => getUsedCertificateCategories(certificates),
@@ -97,38 +92,91 @@ export default function Certificates(): JSX.Element {
         [t],
     );
 
-    const applyStack = useCallback(
-        (immediate = false): void => {
-            if (!total) return;
+    const updatePeek = useCallback((): void => {
+        const track = trackRef.current;
+        if (!track || !total) return;
 
-            const reduced = prefersReducedMotion();
-            const duration = immediate || reduced ? 0 : getMotionDuration(0.55);
+        const reduced = prefersReducedMotion();
+        const trackRect = track.getBoundingClientRect();
+        const centerX = trackRect.left + trackRect.width / 2;
 
-            cardRefs.current.forEach((el, i) => {
-                if (!el) return;
-                const depth = stackDepth(i, activeIndex, total);
-                const tf = stackTransform(depth, peeking && !reduced);
-                const isActive = depth === 0;
+        slideRefs.current.forEach((el, i) => {
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const slideCenter = rect.left + rect.width / 2;
+            const distance = Math.abs(slideCenter - centerX) / Math.max(rect.width, 1);
+            const tDist = Math.min(distance, 1.35);
+            const scale = reduced ? (i === activeIndex ? 1 : 0.96) : 1 - tDist * 0.06;
+            const opacity = reduced ? (i === activeIndex ? 1 : 0.55) : Math.max(0.42, 1 - tDist * 0.45);
 
-                gsap.to(el, {
-                    x: tf.x,
-                    y: tf.y,
-                    scale: tf.scale,
-                    rotation: tf.rotate,
-                    opacity: tf.opacity,
-                    zIndex: tf.z,
-                    duration,
-                    ease: 'power3.out',
-                    overwrite: 'auto',
-                });
+            gsap.to(el, {
+                scale,
+                opacity,
+                duration: reduced ? 0 : 0.28,
+                ease: 'power2.out',
+                overwrite: 'auto',
+            });
+        });
+    }, [activeIndex, total]);
 
-                el.setAttribute('aria-hidden', isActive ? 'false' : 'true');
-                el.tabIndex = isActive ? 0 : -1;
-                el.style.pointerEvents = isActive ? 'auto' : 'none';
+    const scrollToIndex = useCallback(
+        (index: number, instant = false): void => {
+            const track = trackRef.current;
+            if (!track || !total) return;
+
+            const clamped = ((index % total) + total) % total;
+            const slide = slideRefs.current[clamped];
+            if (!slide) return;
+
+            setActiveIndex(clamped);
+            scrollingProgrammatically.current = true;
+
+            const reduced = prefersReducedMotion() || instant;
+            const targetLeft = slide.offsetLeft - (track.clientWidth - slide.offsetWidth) / 2;
+
+            if (reduced) {
+                track.scrollLeft = targetLeft;
+                scrollingProgrammatically.current = false;
+                updatePeek();
+                return;
+            }
+
+            gsap.to(track, {
+                scrollLeft: targetLeft,
+                duration: getMotionDuration(0.55),
+                ease: 'power3.out',
+                overwrite: 'auto',
+                onUpdate: updatePeek,
+                onComplete: () => {
+                    scrollingProgrammatically.current = false;
+                    updatePeek();
+                },
             });
         },
-        [activeIndex, peeking, total],
+        [total, updatePeek],
     );
+
+    const syncIndexFromScroll = useCallback((): void => {
+        const track = trackRef.current;
+        if (!track || !total || scrollingProgrammatically.current) return;
+
+        const trackCenter = track.scrollLeft + track.clientWidth / 2;
+        let closest = 0;
+        let closestDist = Infinity;
+
+        slideRefs.current.forEach((el, i) => {
+            if (!el) return;
+            const slideCenter = el.offsetLeft + el.offsetWidth / 2;
+            const dist = Math.abs(slideCenter - trackCenter);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closest = i;
+            }
+        });
+
+        setActiveIndex((prev) => (prev === closest ? prev : closest));
+        updatePeek();
+    }, [total, updatePeek]);
 
     useGSAP(
         () => {
@@ -166,39 +214,66 @@ export default function Certificates(): JSX.Element {
     );
 
     useEffect(() => {
-        applyStack(true);
-    }, [applyStack, visibleCertificates]);
+        const track = trackRef.current;
+        if (!track) return;
+
+        const onScroll = (): void => {
+            syncIndexFromScroll();
+        };
+
+        track.addEventListener('scroll', onScroll, { passive: true });
+        updatePeek();
+
+        return () => track.removeEventListener('scroll', onScroll);
+    }, [syncIndexFromScroll, updatePeek, visibleCertificates]);
 
     useEffect(() => {
-        if (!total) return;
-
-        const reduced = prefersReducedMotion();
-        if (reduced) {
-            applyStack(true);
-            return;
-        }
-
-        animatingRef.current = true;
-        applyStack(false);
-        const timer = window.setTimeout(() => {
-            animatingRef.current = false;
-        }, getMotionDuration(0.55) * 1000 + 40);
-
-        return () => window.clearTimeout(timer);
-    }, [activeIndex, applyStack, total]);
-
-    useEffect(() => {
-        if (!total) return;
-        applyStack(prefersReducedMotion());
-    }, [peeking, applyStack, total]);
+        const onResize = (): void => {
+            scrollToIndex(activeIndex, true);
+        };
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, [activeIndex, scrollToIndex]);
 
     const go = useCallback(
         (delta: number): void => {
-            if (!total || animatingRef.current) return;
-            setActiveIndex((prev) => (prev + delta + total) % total);
+            if (!total) return;
+            scrollToIndex(activeIndex + delta);
         },
-        [total],
+        [activeIndex, scrollToIndex, total],
     );
+
+    const selectCategory = (next: CategoryFilter): void => {
+        if (next === categoryFilter) return;
+        setCategoryFilter(next);
+        setActiveIndex(0);
+        setLightboxOpen(false);
+        slideRefs.current = [];
+
+        requestAnimationFrame(() => {
+            const track = trackRef.current;
+            if (track) {
+                if (prefersReducedMotion()) {
+                    track.scrollLeft = 0;
+                    updatePeek();
+                    return;
+                }
+                gsap.fromTo(
+                    track,
+                    { opacity: 0.35 },
+                    {
+                        opacity: 1,
+                        duration: getMotionDuration(0.35),
+                        ease: 'power2.out',
+                        onStart: () => {
+                            track.scrollLeft = 0;
+                        },
+                        onComplete: updatePeek,
+                    },
+                );
+            }
+        });
+    };
 
     const onDeckKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
         if (event.key === 'ArrowLeft') {
@@ -210,19 +285,72 @@ export default function Certificates(): JSX.Element {
         }
     };
 
-    const selectCategory = (next: CategoryFilter): void => {
-        if (next === categoryFilter) return;
-        setCategoryFilter(next);
-        setActiveIndex(0);
-        cardRefs.current = [];
-        animatingRef.current = false;
+    const onDragPointerDown = (event: ReactPointerEvent<HTMLDivElement>): void => {
+        if (lightboxOpen || total < 2) return;
+        const track = trackRef.current;
+        if (!track) return;
+
+        const target = event.target as HTMLElement;
+        if (target.closest('a, button')) return;
+
+        dragRef.current = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startScroll: track.scrollLeft,
+            dragging: false,
+            moved: false,
+        };
+        event.currentTarget.setPointerCapture(event.pointerId);
     };
 
-    const active: Certificate | undefined = total ? visibleCertificates[activeIndex] : undefined;
+    const onDragPointerMove = (event: ReactPointerEvent<HTMLDivElement>): void => {
+        const drag = dragRef.current;
+        const track = trackRef.current;
+        if (!drag || !track || drag.pointerId !== event.pointerId) return;
+
+        const deltaX = event.clientX - drag.startX;
+        if (!drag.dragging && Math.abs(deltaX) > DRAG_LOCK_PX) {
+            drag.dragging = true;
+            scrollingProgrammatically.current = true;
+            gsap.killTweensOf(track);
+        }
+
+        if (!drag.dragging) return;
+
+        drag.moved = true;
+        track.scrollLeft = drag.startScroll - deltaX;
+        updatePeek();
+        event.preventDefault();
+    };
+
+    const endDrag = (event: ReactPointerEvent<HTMLDivElement>): void => {
+        const drag = dragRef.current;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+
+        try {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+            /* already released */
+        }
+
+        const deltaX = event.clientX - drag.startX;
+        dragRef.current = null;
+        scrollingProgrammatically.current = false;
+
+        if (!drag.dragging) return;
+
+        if (Math.abs(deltaX) >= SWIPE_THRESHOLD) {
+            scrollToIndex(activeIndex + (deltaX > 0 ? -1 : 1));
+        } else {
+            scrollToIndex(activeIndex);
+        }
+    };
+
     const counterLabel = total
         ? fillCounter(t.certificates.counter, activeIndex + 1, total)
         : '';
     const showFilters = certificates.length > 0 && usedCategories.length > 0;
+    const showDots = total > 1 && total <= 8;
 
     return (
         <section id="certificates" ref={sectionRef} className={styles.certificates}>
@@ -266,7 +394,7 @@ export default function Certificates(): JSX.Element {
                     </div>
                 ) : null}
 
-                {total === 0 || !active ? (
+                {total === 0 ? (
                     <div className={`glass ${styles.empty}`} role="status">
                         <DocumentTextIcon className={styles.emptyIcon} aria-hidden="true" />
                         <p className={styles.emptyTitle}>{t.certificates.empty}</p>
@@ -275,119 +403,165 @@ export default function Certificates(): JSX.Element {
                 ) : (
                     <>
                         <div
-                            ref={deckRef}
                             className={styles.deck}
                             tabIndex={0}
-                            onMouseEnter={() => {
-                                if (!prefersReducedMotion()) setPeeking(true);
-                            }}
-                            onMouseLeave={() => setPeeking(false)}
                             onKeyDown={onDeckKeyDown}
                             role="region"
                             aria-roledescription="carousel"
                             aria-label={t.certificates.label}
                         >
-                            {visibleCertificates.map((cert, index) => {
-                                const isActive = index === activeIndex;
-                                const description = cert.description?.[language];
-                                const courseLabel =
-                                    typeof cert.courseCount === 'number'
-                                        ? fillCourseCount(
-                                              t.certificates.courses_one,
-                                              t.certificates.courses_many,
-                                              cert.courseCount,
-                                          )
-                                        : null;
+                            <p className={styles.srOnly} aria-live="polite" aria-atomic="true">
+                                {counterLabel}
+                            </p>
 
-                                return (
-                                    <article
-                                        key={cert.id}
-                                        ref={(el) => {
-                                            cardRefs.current[index] = el;
-                                        }}
-                                        className={styles.card}
-                                        data-active={isActive ? 'true' : 'false'}
-                                        aria-hidden={!isActive}
-                                    >
-                                        <div className={styles.liquidContainer} aria-hidden="true">
-                                            <span className={styles.liquidBlob} />
-                                            <span className={styles.liquidBlob} />
-                                        </div>
+                            <div
+                                ref={trackRef}
+                                id={trackId}
+                                className={styles.track}
+                                onPointerDown={onDragPointerDown}
+                                onPointerMove={onDragPointerMove}
+                                onPointerUp={endDrag}
+                                onPointerCancel={endDrag}
+                            >
+                                {visibleCertificates.map((cert, index) => {
+                                    const isActive = index === activeIndex;
+                                    const isNear = Math.abs(index - activeIndex) <= 1;
+                                    const description = cert.description?.[language];
+                                    const courseLabel =
+                                        typeof cert.courseCount === 'number'
+                                            ? fillCourseCount(
+                                                  t.certificates.courses_one,
+                                                  t.certificates.courses_many,
+                                                  cert.courseCount,
+                                              )
+                                            : null;
 
-                                        <div className={styles.cardContent}>
-                                            <header className={styles.cardHeader}>
-                                                <div className={styles.metaRow}>
-                                                    <span className={styles.categoryBadge}>
-                                                        {categoryLabel(cert.category)}
-                                                    </span>
-                                                    <p className={styles.issuer}>
-                                                        <span className={styles.issuerLabel}>
-                                                            {t.certificates.issuer_label}
-                                                        </span>
-                                                        {cert.issuer}
-                                                        {cert.issuedAt ? (
-                                                            <span className={styles.issuedAt}>
-                                                                · {cert.issuedAt}
-                                                            </span>
-                                                        ) : null}
-                                                    </p>
+                                    return (
+                                        <article
+                                            key={cert.id}
+                                            ref={(el) => {
+                                                slideRefs.current[index] = el;
+                                            }}
+                                            className={styles.slide}
+                                            data-active={isActive ? 'true' : 'false'}
+                                            aria-hidden={!isActive}
+                                        >
+                                            <div className={styles.slideCard}>
+                                                <div className={styles.liquidContainer} aria-hidden="true">
+                                                    <span className={styles.liquidBlob} />
+                                                    <span className={styles.liquidBlob} />
                                                 </div>
-                                                <h3 className={styles.cardTitle}>{cert.title}</h3>
-                                                {description ? (
-                                                    <p className={styles.description}>{description}</p>
-                                                ) : null}
-                                                {courseLabel ? (
-                                                    <p className={styles.courseCount}>{courseLabel}</p>
-                                                ) : null}
-                                            </header>
 
-                                            <div className={styles.previewShell}>
-                                                {isActive ? (
-                                                    <iframe
-                                                        className={styles.preview}
-                                                        src={`${cert.pdf}#view=FitH`}
-                                                        title={fillPreviewLabel(
-                                                            t.certificates.preview_label,
-                                                            cert.title,
+                                                <div className={styles.slideContent}>
+                                                    <header className={styles.slideMeta}>
+                                                        <div className={styles.metaRow}>
+                                                            <span className={styles.categoryBadge}>
+                                                                {categoryLabel(cert.category)}
+                                                            </span>
+                                                            <p className={styles.issuer}>
+                                                                <span className={styles.issuerLabel}>
+                                                                    {t.certificates.issuer_label}
+                                                                </span>
+                                                                {cert.issuer}
+                                                                {cert.issuedAt ? (
+                                                                    <span className={styles.issuedAt}>
+                                                                        · {cert.issuedAt}
+                                                                    </span>
+                                                                ) : null}
+                                                            </p>
+                                                        </div>
+                                                        <h3 className={styles.cardTitle}>{cert.title}</h3>
+                                                        {description ? (
+                                                            <p className={styles.description}>{description}</p>
+                                                        ) : null}
+                                                        {courseLabel ? (
+                                                            <p className={styles.courseCount}>{courseLabel}</p>
+                                                        ) : null}
+                                                    </header>
+
+                                                    <div className={styles.previewShell}>
+                                                        {isNear ? (
+                                                            <iframe
+                                                                className={styles.preview}
+                                                                src={`${cert.pdf}#view=FitH`}
+                                                                title={fillPreviewLabel(
+                                                                    t.certificates.preview_label,
+                                                                    cert.title,
+                                                                )}
+                                                                loading={isActive ? 'eager' : 'lazy'}
+                                                                tabIndex={isActive ? 0 : -1}
+                                                            />
+                                                        ) : (
+                                                            <div
+                                                                className={styles.previewPlaceholder}
+                                                                aria-hidden="true"
+                                                            />
                                                         )}
-                                                        loading="lazy"
-                                                    />
-                                                ) : (
-                                                    <div className={styles.previewPlaceholder} aria-hidden="true" />
-                                                )}
-                                                <a
-                                                    className={styles.openPdf}
-                                                    href={cert.pdf}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    tabIndex={isActive ? 0 : -1}
-                                                >
-                                                    <DocumentTextIcon aria-hidden="true" width={16} height={16} />
-                                                    {t.certificates.open_pdf}
-                                                </a>
-                                            </div>
 
-                                            <footer className={styles.cardFooter}>
-                                                <a
-                                                    className={styles.verifyLink}
-                                                    href={cert.verificationUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    tabIndex={isActive ? 0 : -1}
-                                                    aria-label={`${t.certificates.verify}: ${cert.title}`}
-                                                >
-                                                    {t.certificates.verify}
-                                                    <ArrowTopRightOnSquareIcon
-                                                        aria-hidden="true"
-                                                        width={16}
-                                                        height={16}
-                                                    />
-                                                </a>
-                                            </footer>
-                                        </div>
-                                    </article>
-                                );
-                            })}
+                                                        <div
+                                                            className={styles.dragLayer}
+                                                            aria-hidden="true"
+                                                            data-active={isActive ? 'true' : 'false'}
+                                                        />
+
+                                                        <div className={styles.previewActions}>
+                                                            <button
+                                                                type="button"
+                                                                className={styles.actionBtn}
+                                                                onClick={() => {
+                                                                    setActiveIndex(index);
+                                                                    setLightboxOpen(true);
+                                                                }}
+                                                                tabIndex={isActive ? 0 : -1}
+                                                                aria-label={t.certificates.expand}
+                                                            >
+                                                                <ArrowsPointingOutIcon
+                                                                    aria-hidden="true"
+                                                                    width={16}
+                                                                    height={16}
+                                                                />
+                                                                {t.certificates.expand}
+                                                            </button>
+                                                            <a
+                                                                className={styles.actionBtn}
+                                                                href={cert.pdf}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                tabIndex={isActive ? 0 : -1}
+                                                            >
+                                                                <DocumentTextIcon
+                                                                    aria-hidden="true"
+                                                                    width={16}
+                                                                    height={16}
+                                                                />
+                                                                {t.certificates.open_pdf}
+                                                            </a>
+                                                        </div>
+                                                    </div>
+
+                                                    <footer className={styles.cardFooter}>
+                                                        <a
+                                                            className={styles.verifyLink}
+                                                            href={cert.verificationUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            tabIndex={isActive ? 0 : -1}
+                                                            aria-label={`${t.certificates.verify}: ${cert.title}`}
+                                                        >
+                                                            {t.certificates.verify}
+                                                            <ArrowTopRightOnSquareIcon
+                                                                aria-hidden="true"
+                                                                width={16}
+                                                                height={16}
+                                                            />
+                                                        </a>
+                                                    </footer>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         <div className={styles.controls}>
@@ -396,23 +570,60 @@ export default function Certificates(): JSX.Element {
                                 className={styles.navBtn}
                                 onClick={() => go(-1)}
                                 aria-label={t.certificates.prev}
+                                aria-controls={trackId}
                                 disabled={total < 2}
                             >
                                 <ArrowLeftIcon aria-hidden="true" width={18} height={18} />
                             </button>
-                            <p className={styles.counter} aria-live="polite">
-                                {counterLabel}
-                            </p>
+
+                            <div className={styles.pager}>
+                                <p className={styles.counter} aria-hidden="true">
+                                    {counterLabel}
+                                </p>
+                                {showDots ? (
+                                    <div className={styles.dots} role="tablist" aria-label={t.certificates.label}>
+                                        {visibleCertificates.map((cert, index) => (
+                                            <button
+                                                key={cert.id}
+                                                type="button"
+                                                role="tab"
+                                                className={styles.dot}
+                                                data-active={index === activeIndex ? 'true' : 'false'}
+                                                aria-selected={index === activeIndex}
+                                                aria-label={fillCounter(
+                                                    t.certificates.counter,
+                                                    index + 1,
+                                                    total,
+                                                )}
+                                                onClick={() => scrollToIndex(index)}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : null}
+                            </div>
+
                             <button
                                 type="button"
                                 className={styles.navBtn}
                                 onClick={() => go(1)}
                                 aria-label={t.certificates.next}
+                                aria-controls={trackId}
                                 disabled={total < 2}
                             >
                                 <ArrowRightIcon aria-hidden="true" width={18} height={18} />
                             </button>
                         </div>
+
+                        {lightboxOpen ? (
+                            <PdfLightbox
+                                certificates={visibleCertificates}
+                                activeIndex={activeIndex}
+                                onClose={() => setLightboxOpen(false)}
+                                onNavigate={(index) => {
+                                    scrollToIndex(index, true);
+                                }}
+                            />
+                        ) : null}
                     </>
                 )}
             </div>

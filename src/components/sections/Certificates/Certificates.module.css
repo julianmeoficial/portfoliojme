@@ -1,19 +1,20 @@
 /* ═══════════════════════════════════════════════════════
-   CERTIFICATES — Dia-style stacked brief deck
+   CERTIFICATES — Unified swipe deck (meta + PDF per slide)
 ═══════════════════════════════════════════════════════ */
 
 .certificates {
     padding-block: clamp(var(--space-20), 10vw, var(--space-32));
-    padding-inline: clamp(var(--space-6), 5vw, var(--space-16));
+    padding-inline: clamp(var(--space-4), 4vw, var(--space-16));
     position: relative;
     border-top: 1px solid var(--color-divider);
     overflow: hidden;
 }
 
 .header {
-    margin-bottom: var(--space-16);
+    margin-bottom: var(--space-12);
     max-width: var(--content-wide);
     margin-inline: auto;
+    padding-inline: clamp(var(--space-2), 1vw, var(--space-4));
 }
 
 .label {
@@ -48,12 +49,24 @@
 }
 
 .body {
-    max-width: var(--content-default);
+    max-width: var(--content-max);
     margin-inline: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: var(--space-8);
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* ── Category filters ── */
@@ -63,6 +76,7 @@
     justify-content: center;
     gap: var(--space-2);
     width: 100%;
+    padding-inline: clamp(var(--space-2), 1vw, var(--space-4));
 }
 
 .filterChip {
@@ -138,20 +152,52 @@
     line-height: 1.55;
 }
 
-/* ── Deck stage ── */
+/* ── Deck / track ── */
 .deck {
-    position: relative;
     width: 100%;
-    min-height: clamp(28rem, 68vh, 40rem);
-    perspective: 1400px;
     outline: none;
 }
 
-.card {
-    position: absolute;
-    inset: 0;
+.track {
+    display: flex;
+    align-items: stretch;
+    gap: clamp(var(--space-4), 2.5vw, var(--space-8));
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+    scroll-padding-inline: clamp(var(--space-4), 8vw, 12%);
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-block: var(--space-2);
+    padding-inline: clamp(var(--space-4), 8vw, 12%);
+    cursor: grab;
+    touch-action: pan-x;
+}
+
+.track::-webkit-scrollbar {
+    display: none;
+}
+
+.track:active {
+    cursor: grabbing;
+}
+
+.slide {
+    flex: 0 0 min(100%, 52rem);
+    width: min(100%, 52rem);
+    max-width: 100%;
+    scroll-snap-align: center;
+    transform-origin: center center;
+    will-change: transform, opacity;
+}
+
+.slideCard {
+    position: relative;
     display: flex;
     flex-direction: column;
+    height: 100%;
     border-radius: var(--radius-2xl);
     border: 1px solid var(--glass-border);
     background: var(--glass-bg-strong);
@@ -159,11 +205,9 @@
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow: var(--shadow-md);
     overflow: hidden;
-    transform-origin: center center;
-    will-change: transform, opacity;
 }
 
-.card[data-active='true'] {
+.slide[data-active='true'] .slideCard {
     border-color: var(--glass-border-hover);
     box-shadow: var(--neu-shadow-hover), var(--shadow-md);
 }
@@ -212,19 +256,23 @@
     .liquidBlob {
         animation: none;
     }
+
+    .track {
+        scroll-behavior: auto;
+    }
 }
 
-.cardContent {
+.slideContent {
     position: relative;
     z-index: 1;
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
     height: 100%;
-    padding: clamp(var(--space-6), 3vw, var(--space-8));
+    padding: clamp(var(--space-5), 2.5vw, var(--space-8));
 }
 
-.cardHeader {
+.slideMeta {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
@@ -273,7 +321,7 @@
 
 .cardTitle {
     font-family: var(--font-display);
-    font-size: clamp(var(--text-xl), 2.4vw, var(--text-2xl));
+    font-size: clamp(var(--text-xl), 2.6vw, var(--text-2xl));
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--color-text);
@@ -285,7 +333,7 @@
     font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--color-text-secondary);
-    max-width: 52ch;
+    max-width: 58ch;
 }
 
 .courseCount {
@@ -300,33 +348,47 @@
 .previewShell {
     position: relative;
     flex: 1;
-    min-height: 0;
+    min-height: clamp(22rem, 58vh, 44rem);
     border-radius: var(--radius-xl);
     border: 1px solid var(--glass-border);
     background: var(--color-surface-offset);
     overflow: hidden;
 }
 
-.preview {
+.preview,
+.previewPlaceholder {
     display: block;
     width: 100%;
     height: 100%;
-    min-height: clamp(16rem, 42vh, 24rem);
+    min-height: clamp(22rem, 58vh, 44rem);
     border: 0;
     background: var(--color-surface-offset);
 }
 
-.previewPlaceholder {
-    width: 100%;
-    height: 100%;
-    min-height: clamp(16rem, 42vh, 24rem);
-    background: var(--color-surface-offset);
+.dragLayer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    touch-action: none;
+    cursor: grab;
 }
 
-.openPdf {
+.dragLayer[data-active='false'] {
+    pointer-events: none;
+}
+
+.previewActions {
     position: absolute;
     right: var(--space-3);
     bottom: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    z-index: 2;
+}
+
+.actionBtn {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
@@ -341,16 +403,17 @@
     font-weight: 600;
     letter-spacing: 0.02em;
     text-decoration: none;
+    cursor: pointer;
     box-shadow: var(--shadow-sm);
     transition: border-color var(--transition-fast), transform var(--transition-fast);
 }
 
-.openPdf:hover {
+.actionBtn:hover {
     border-color: var(--glass-border-hover);
     transform: translateY(-1px);
 }
 
-.openPdf:focus-visible {
+.actionBtn:focus-visible {
     outline: 2px solid var(--color-text);
     outline-offset: 2px;
 }
@@ -389,6 +452,15 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-5);
+    width: 100%;
+}
+
+.pager {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 5rem;
 }
 
 .navBtn {
@@ -424,7 +496,6 @@
 }
 
 .counter {
-    min-width: 4.5rem;
     text-align: center;
     font-family: var(--font-mono);
     font-size: var(--text-sm);
@@ -433,18 +504,99 @@
     color: var(--color-text-secondary);
 }
 
-@media (max-width: 640px) {
-    .deck {
-        min-height: clamp(26rem, 72vh, 36rem);
+.dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    padding: 0;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    cursor: pointer;
+    transition: background var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dot[data-active='true'] {
+    background: var(--color-text);
+    border-color: var(--color-text);
+    transform: scale(1.2);
+}
+
+.dot:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+}
+
+/* ── Responsive ── */
+@media (min-width: 640px) {
+    .slide {
+        flex-basis: min(92%, 48rem);
+        width: min(92%, 48rem);
+    }
+}
+
+@media (min-width: 1024px) {
+    .track {
+        scroll-padding-inline: max(var(--space-8), calc((100% - 52rem) / 2));
+        padding-inline: max(var(--space-8), calc((100% - 52rem) / 2));
     }
 
-    .cardContent {
+    .slide {
+        flex-basis: min(78%, 52rem);
+        width: min(78%, 52rem);
+    }
+
+    .previewShell,
+    .preview,
+    .previewPlaceholder {
+        min-height: clamp(28rem, 62vh, 48rem);
+    }
+}
+
+@media (max-width: 640px) {
+    .slide {
+        flex-basis: 100%;
+        width: 100%;
+    }
+
+    .track {
+        gap: var(--space-4);
+        scroll-padding-inline: var(--space-4);
+        padding-inline: var(--space-4);
+    }
+
+    .slideContent {
         gap: var(--space-4);
         padding: var(--space-5);
     }
 
+    .previewShell,
     .preview,
     .previewPlaceholder {
-        min-height: clamp(14rem, 38vh, 20rem);
+        min-height: clamp(20rem, 55vh, 34rem);
+    }
+
+    .previewActions {
+        left: var(--space-3);
+        right: var(--space-3);
+        justify-content: center;
+    }
+
+    .actionBtn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 }

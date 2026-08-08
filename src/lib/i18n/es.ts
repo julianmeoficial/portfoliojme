@@ -94,6 +94,9 @@ export const es: Translations = {
         filter_all: 'Todos',
         courses_one: '1 curso completado',
         courses_many: '{count} cursos completados',
+        expand: 'Ampliar vista previa',
+        close_preview: 'Cerrar vista ampliada',
+        lightbox_label: 'Certificado — {title}',
         categories: {
             coursera: 'Coursera',
             aws: 'AWS',

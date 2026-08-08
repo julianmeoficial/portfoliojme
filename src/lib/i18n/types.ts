@@ -91,6 +91,9 @@ export interface Translations {
         filter_all: string;
         courses_one: string;
         courses_many: string;
+        expand: string;
+        close_preview: string;
+        lightbox_label: string;
         categories: {
             coursera: string;
             aws: string;
