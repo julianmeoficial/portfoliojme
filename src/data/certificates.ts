@@ -81,6 +81,20 @@ export const certificates: Certificate[] = [
         },
         courseCount: 3,
     },
+    {
+        id: 'energy-production-distribution-safety',
+        title: 'Energy Production, Distribution & Safety',
+        issuer: 'University at Buffalo',
+        category: 'coursera',
+        pdf: '/certificates/energy-production-distribution-safety.pdf',
+        verificationUrl: 'https://coursera.org/verify/specialization/B3MB63MK1JVW',
+        issuedAt: '2026-02',
+        description: {
+            es: 'Especialización de Coursera (University at Buffalo) sobre la industria energética: sistemas eléctricos, gas natural, seguridad en utilities y el impacto de las renovables en la Smart Grid.',
+            en: 'Coursera specialization (University at Buffalo) on the energy industry: electric power systems, natural gas, utility safety, and the impact of renewables on the Smart Grid.',
+        },
+        courseCount: 4,
+    },
 ];
 
 /** Categories that currently have at least one certificate. */
