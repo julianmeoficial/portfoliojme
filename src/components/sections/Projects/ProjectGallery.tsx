@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type JSX, type KeyboardEvent } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import ImageWithSkeleton from '@/components/common/ImageWithSkeleton';
+import { preloadScreenshots } from './preloadScreenshots';
 import styles from './ProjectGallery.module.css';
 
 interface ProjectGalleryProps {
@@ -35,32 +36,69 @@ export default function ProjectGallery({
     const { t } = useLanguage();
     const trackRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
+    const activeIndexRef = useRef(0);
+    const scrollRafRef = useRef<number | null>(null);
     const trackId = useId();
+
+    useEffect(() => {
+        activeIndexRef.current = activeIndex;
+    }, [activeIndex]);
+
+    useEffect(() => {
+        preloadScreenshots(screenshots, activeIndex);
+    }, [activeIndex, screenshots]);
 
     const scrollToIndex = useCallback((index: number) => {
         const track = trackRef.current;
         if (!track) return;
         const clamped = Math.max(0, Math.min(index, screenshots.length - 1));
         const slide = track.children[clamped] as HTMLElement | undefined;
-        slide?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+        if (slide) {
+            track.scrollTo({ left: slide.offsetLeft, behavior: 'smooth' });
+        }
         setActiveIndex(clamped);
     }, [screenshots.length]);
 
     const handleScroll = useCallback(() => {
-        const track = trackRef.current;
-        if (!track || track.children.length === 0) return;
-        const slideWidth = track.clientWidth;
-        if (slideWidth === 0) return;
-        const index = Math.round(track.scrollLeft / slideWidth);
-        setActiveIndex(Math.max(0, Math.min(index, screenshots.length - 1)));
-    }, [screenshots.length]);
+        if (scrollRafRef.current !== null) return;
+        scrollRafRef.current = requestAnimationFrame(() => {
+            scrollRafRef.current = null;
+            const track = trackRef.current;
+            if (!track || track.children.length === 0) return;
+            const center = track.scrollLeft + track.clientWidth / 2;
+            let closest = 0;
+            let minDist = Infinity;
+            for (let i = 0; i < track.children.length; i++) {
+                const slide = track.children[i] as HTMLElement;
+                const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
+                const dist = Math.abs(slideCenter - center);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = i;
+                }
+            }
+            if (closest !== activeIndexRef.current) {
+                setActiveIndex(closest);
+            }
+        });
+    }, []);
 
     useEffect(() => {
         const track = trackRef.current;
         if (!track) return;
         track.addEventListener('scroll', handleScroll, { passive: true });
-        return () => track.removeEventListener('scroll', handleScroll);
+        return () => {
+            track.removeEventListener('scroll', handleScroll);
+            if (scrollRafRef.current !== null) {
+                cancelAnimationFrame(scrollRafRef.current);
+            }
+        };
     }, [handleScroll]);
+
+    const screenshotAlt = (index: number): string =>
+        t.projects.screenshot_alt
+            .replace('{title}', projectTitle)
+            .replace('{n}', String(index + 1));
 
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
         if (e.key === 'ArrowLeft') {
@@ -127,10 +165,11 @@ export default function ProjectGallery({
                         >
                             <ImageWithSkeleton
                                 src={src}
-                                alt=""
+                                alt={screenshotAlt(i)}
                                 className={styles.slideImage}
                                 wrapperClassName={styles.slideImageWrapper}
-                                loading={i === 0 ? 'eager' : 'lazy'}
+                                loading={i <= 1 ? 'eager' : 'lazy'}
+                                fetchPriority={i === 0 ? 'high' : i === 1 ? 'low' : undefined}
                                 errorLabel={t.common.image_error}
                                 loadingLabel={t.common.loading}
                             />

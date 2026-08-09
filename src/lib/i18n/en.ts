@@ -66,6 +66,7 @@ export const en: Translations = {
         lightbox_expand: 'Expand image',
         lightbox_label: 'Expanded view — {title}',
         gallery_choose_slide: 'Choose slide',
+        screenshot_alt: '{title} — screenshot {n}',
     },
     skills: {
         label: 'Technical skills',

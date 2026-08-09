@@ -1,12 +1,21 @@
 'use client';
 
-import { useCallback, useEffect, useId, useRef, type JSX } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useId,
+    useRef,
+    useState,
+    type JSX,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
+import { useModalLock } from '@/lib/hooks/useModalLock';
 import { prefersReducedMotion, getMotionDuration } from '@/lib/motion/prefersReducedMotion';
+import { decodeScreenshot, preloadScreenshots } from './preloadScreenshots';
 import styles from './ImageLightbox.module.css';
 
 if (typeof window !== 'undefined') {
@@ -37,6 +46,10 @@ function ChevronRight(): JSX.Element {
     );
 }
 
+function screenshotAlt(template: string, title: string, index: number): string {
+    return template.replace('{title}', title).replace('{n}', String(index + 1));
+}
+
 export default function ImageLightbox({
     projectTitle,
     screenshots,
@@ -46,9 +59,16 @@ export default function ImageLightbox({
 }: ImageLightboxProps): JSX.Element | null {
     const { t } = useLanguage();
     const overlayRef = useRef<HTMLDivElement>(null);
-    const imageRef = useRef<HTMLImageElement>(null);
+    const stageRef = useRef<HTMLDivElement>(null);
+    const bufferRefs = useRef<[HTMLImageElement | null, HTMLImageElement | null]>([null, null]);
+    const activeBufferRef = useRef(0);
+    const displayedIndexRef = useRef(activeIndex);
+    const swapTokenRef = useRef(0);
     const titleId = useId();
+    const [frontBuffer, setFrontBuffer] = useState(0);
+    const [displayedIndex, setDisplayedIndex] = useState(activeIndex);
 
+    useModalLock(true);
     useFocusTrap(overlayRef, true);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -69,11 +89,17 @@ export default function ImageLightbox({
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
+    /* Overlay fade-in once on mount — never re-run on slide change. */
     useGSAP(() => {
-        if (!overlayRef.current || !imageRef.current) return;
+        if (!overlayRef.current || !stageRef.current) return;
+
+        const frontImg = bufferRefs.current[0];
+        if (frontImg) {
+            gsap.set(frontImg, { opacity: 1 });
+        }
 
         if (prefersReducedMotion()) {
-            gsap.set([overlayRef.current, imageRef.current], { opacity: 1, scale: 1 });
+            gsap.set([overlayRef.current, stageRef.current], { opacity: 1, scale: 1 });
             return;
         }
 
@@ -83,17 +109,78 @@ export default function ImageLightbox({
             { opacity: 1, duration: getMotionDuration(0.25), ease: 'power2.out' },
         );
         gsap.fromTo(
-            imageRef.current,
-            { opacity: 0, scale: 0.92 },
+            stageRef.current,
+            { opacity: 0, scale: 0.96 },
             { opacity: 1, scale: 1, duration: getMotionDuration(0.35), ease: 'power3.out', delay: 0.05 },
         );
-    }, { scope: overlayRef, dependencies: [activeIndex] });
+    }, { scope: overlayRef });
+
+    /* Preload neighbors whenever the requested index changes. */
+    useEffect(() => {
+        preloadScreenshots(screenshots, activeIndex);
+    }, [activeIndex, screenshots]);
+
+    /* Decode + crossfade when navigating between slides. */
+    useEffect(() => {
+        if (displayedIndexRef.current === activeIndex) return;
+
+        const token = ++swapTokenRef.current;
+        const url = screenshots[activeIndex];
+        if (!url) return;
+
+        const swap = async (): Promise<void> => {
+            await decodeScreenshot(url);
+            if (swapTokenRef.current !== token) return;
+
+            const backBuffer = activeBufferRef.current === 0 ? 1 : 0;
+            const backImg = bufferRefs.current[backBuffer];
+            const frontImg = bufferRefs.current[activeBufferRef.current];
+            if (!backImg) return;
+
+            backImg.src = url;
+            backImg.alt = screenshotAlt(t.projects.screenshot_alt, projectTitle, activeIndex);
+
+            const reduced = prefersReducedMotion();
+            if (reduced) {
+                activeBufferRef.current = backBuffer;
+                setFrontBuffer(backBuffer);
+                displayedIndexRef.current = activeIndex;
+                setDisplayedIndex(activeIndex);
+                gsap.set(backImg, { opacity: 1 });
+                if (frontImg) gsap.set(frontImg, { opacity: 0 });
+                return;
+            }
+
+            gsap.killTweensOf([frontImg, backImg]);
+            gsap.set(backImg, { opacity: 0 });
+            gsap.to(backImg, {
+                opacity: 1,
+                duration: getMotionDuration(0.22),
+                ease: 'power2.out',
+            });
+            gsap.to(frontImg, {
+                opacity: 0,
+                duration: getMotionDuration(0.22),
+                ease: 'power2.out',
+                onComplete: () => {
+                    if (swapTokenRef.current !== token) return;
+                    activeBufferRef.current = backBuffer;
+                    setFrontBuffer(backBuffer);
+                    displayedIndexRef.current = activeIndex;
+                    setDisplayedIndex(activeIndex);
+                },
+            });
+        };
+
+        void swap();
+    }, [activeIndex, projectTitle, screenshots, t.projects.screenshot_alt]);
 
     const slideLabel = t.projects.gallery_slide_label
-        .replace('{current}', String(activeIndex + 1))
+        .replace('{current}', String(displayedIndex + 1))
         .replace('{total}', String(screenshots.length));
 
     const dialogTitle = t.projects.lightbox_label.replace('{title}', projectTitle);
+    const initialAlt = screenshotAlt(t.projects.screenshot_alt, projectTitle, activeIndex);
 
     const content = (
         <div
@@ -146,13 +233,27 @@ export default function ImageLightbox({
                     </svg>
                 </button>
 
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    ref={imageRef}
-                    src={screenshots[activeIndex]}
-                    alt={`${projectTitle} screenshot ${activeIndex + 1}`}
-                    className={styles.image}
-                />
+                <div ref={stageRef} className={styles.imageStage}>
+                    {[0, 1].map((bufferIndex) => (
+                        <div
+                            key={bufferIndex}
+                            className={`${styles.imageLayer} ${bufferIndex === frontBuffer ? styles.imageLayerActive : ''}`}
+                            aria-hidden={bufferIndex !== frontBuffer}
+                        >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                ref={(el) => {
+                                    bufferRefs.current[bufferIndex] = el;
+                                }}
+                                src={bufferIndex === 0 ? screenshots[activeIndex] : undefined}
+                                alt={bufferIndex === frontBuffer ? initialAlt : ''}
+                                className={styles.image}
+                                decoding="async"
+                                fetchPriority={bufferIndex === 0 ? 'high' : 'low'}
+                            />
+                        </div>
+                    ))}
+                </div>
 
                 <span className={styles.counter} aria-live="polite">
                     {slideLabel}

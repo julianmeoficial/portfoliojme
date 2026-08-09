@@ -82,6 +82,16 @@ export default function ProjectModal({
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
+    useEffect(() => {
+        const modal = modalRef.current;
+        if (!modal) return;
+        if (isLightboxOpen) {
+            modal.setAttribute('inert', '');
+        } else {
+            modal.removeAttribute('inert');
+        }
+    }, [isLightboxOpen]);
+
     useGSAP(() => {
         if (!overlayRef.current || !modalRef.current) return;
 
@@ -141,6 +151,7 @@ export default function ProjectModal({
 
                     <div className={styles.modalBody}>
                         <ProjectGallery
+                            key={project.id}
                             projectTitle={project.title}
                             screenshots={project.screenshots}
                             onExpand={(index) => setLightboxIndex(index)}

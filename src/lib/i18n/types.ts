@@ -63,6 +63,7 @@ export interface Translations {
         lightbox_expand: string;
         lightbox_label: string;
         gallery_choose_slide: string;
+        screenshot_alt: string;
     };
     skills: {
         label: string;

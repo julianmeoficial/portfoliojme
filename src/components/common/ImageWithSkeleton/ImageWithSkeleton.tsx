@@ -10,16 +10,18 @@ interface ImageWithSkeletonProps {
     className?: string;
     wrapperClassName?: string;
     loading?: 'lazy' | 'eager';
+    fetchPriority?: 'high' | 'low' | 'auto';
     errorLabel?: string;
     loadingLabel?: string;
 }
 
-export default function ImageWithSkeleton({
+function ImageWithSkeletonInner({
     src,
     alt,
     className,
     wrapperClassName,
     loading = 'lazy',
+    fetchPriority,
     errorLabel = 'Could not load image',
     loadingLabel = 'Loading',
 }: ImageWithSkeletonProps): JSX.Element {
@@ -44,6 +46,8 @@ export default function ImageWithSkeleton({
                     src={src}
                     alt={alt}
                     loading={loading}
+                    decoding="async"
+                    {...(fetchPriority ? { fetchPriority } : {})}
                     className={`${styles.image} ${status === 'loaded' ? styles.imageLoaded : ''} ${className ?? ''}`}
                     onLoad={() => setStatus('loaded')}
                     onError={() => setStatus('error')}
@@ -51,4 +55,8 @@ export default function ImageWithSkeleton({
             )}
         </div>
     );
+}
+
+export default function ImageWithSkeleton(props: ImageWithSkeletonProps): JSX.Element {
+    return <ImageWithSkeletonInner key={props.src} {...props} />;
 }
