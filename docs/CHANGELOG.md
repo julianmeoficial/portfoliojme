@@ -4,6 +4,10 @@ Notable changes to this portfolio. For contribution workflow and conventions, se
 
 ## 2026-08
 
+### Fixed
+
+- **Theme auto / toggle** — Local hour now uses `Intl` timezone (aligned with locale detection). Toggle reads DOM instead of stale React state; double-click Navbar sun/moon restores `auto` mode. Hydration flicker on theme icon fixed with mount guard.
+
 ### Added
 
 - **Certificates section** — Swipe deck between Skills and Contact. PDFs in `public/certificates/`; metadata in `src/data/certificates.ts`. Each slide pairs meta + PDF preview; click/drag navigation, dots, `PdfLightbox`, verification link, i18n + nav `#certificates`.

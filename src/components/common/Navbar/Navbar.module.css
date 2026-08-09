@@ -152,6 +152,12 @@
     box-shadow: var(--neu-shadow-hover, 0 6px 15px rgba(0,0,0,0.1));
 }
 
+.themeIconPlaceholder {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
 .ctaBtn {
     display: inline-flex;
     align-items: center;

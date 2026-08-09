@@ -25,6 +25,7 @@ export const es: Translations = {
         cta_talk: 'Hablemos',
         theme_light: 'Cambiar a modo claro',
         theme_dark: 'Cambiar a modo oscuro',
+        theme_auto_hint: 'Doble clic para restaurar el tema automático día/noche',
         menu_open: 'Abrir menú',
         menu_close: 'Cerrar menú',
         mobile_nav: 'Navegación móvil',

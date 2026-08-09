@@ -24,6 +24,7 @@ export interface Translations {
         cta_talk: string;
         theme_light: string;
         theme_dark: string;
+        theme_auto_hint: string;
         menu_open: string;
         menu_close: string;
         mobile_nav: string;

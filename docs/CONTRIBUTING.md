@@ -89,8 +89,8 @@ While `certificates` is `[]`, the section shows an empty state (nav link remains
 
 | Key | Values | Description |
 | --- | ------ | ----------- |
-| `portfolio-theme-mode` | `auto` \| `manual` | Default `auto`: light 07:00–19:00 local time |
-| `portfolio-theme` | `light` \| `dark` | Stored when user toggles sun/moon in Navbar |
+| `portfolio-theme-mode` | `auto` \| `manual` | Default `auto`: light 07:00–19:00 via `Intl` timezone |
+| `portfolio-theme` | `light` \| `dark` | Stored when user toggles sun/moon; double-click toggle restores `auto` |
 | `portfolio-lang` | `es` \| `en` | Selected language; absent on first visit → English |
 | `portfolio-lang-prompt-dismissed` | `true` | Spanish suggestion banner dismissed |
 

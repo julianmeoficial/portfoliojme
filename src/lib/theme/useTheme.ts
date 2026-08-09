@@ -6,6 +6,7 @@ import {
     getEffectiveTheme,
     readThemeFromDocument,
     readThemeMode,
+    resetThemeToAuto,
     THEME_MODE_KEY,
     THEME_STORAGE_KEY,
     type Theme,
@@ -16,6 +17,7 @@ interface UseThemeResult {
     theme: Theme;
     mode: ThemeMode;
     toggleTheme: () => void;
+    resetToAuto: () => void;
 }
 
 export function useTheme(): UseThemeResult {
@@ -40,15 +42,24 @@ export function useTheme(): UseThemeResult {
     }, [mode]);
 
     const toggleTheme = useCallback((): void => {
-        setTheme((prev) => {
-            const next: Theme = prev === 'dark' ? 'light' : 'dark';
+        const current = readThemeFromDocument();
+        const next: Theme = current === 'dark' ? 'light' : 'dark';
+        try {
             localStorage.setItem(THEME_STORAGE_KEY, next);
             localStorage.setItem(THEME_MODE_KEY, 'manual');
-            setMode('manual');
-            applyTheme(next);
-            return next;
-        });
+        } catch {
+            /* private mode / quota */
+        }
+        applyTheme(next);
+        setMode('manual');
+        setTheme(next);
     }, []);
 
-    return { theme, mode, toggleTheme };
+    const resetToAuto = useCallback((): void => {
+        const next = resetThemeToAuto();
+        setMode('auto');
+        setTheme(next);
+    }, []);
+
+    return { theme, mode, toggleTheme, resetToAuto };
 }

@@ -30,8 +30,9 @@ Two themes via `data-theme="dark|light"` on `<html>`:
 ### Automatic theme
 
 - `auto` mode (default): light between **07:00 and 19:00** local time; dark otherwise.
-- Sun/moon button in Navbar forces `manual` mode and respects the user's choice.
-- No geolocation: browser local time defines day/night.
+- Local hour is derived via `Intl.DateTimeFormat().resolvedOptions().timeZone` (same pattern as locale detection).
+- Sun/moon button in Navbar forces `manual` mode and respects the user's choice; double-click restores `auto`.
+- No geolocation: browser-reported timezone defines day/night.
 
 Key variables:
 

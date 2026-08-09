@@ -118,11 +118,11 @@ See [I18N.md](I18N.md) for the full guide (adding keys, banner behaviour, rules)
 
 ## Themes
 
-- Auto by default: **light** 07:00–19:00, **dark** otherwise (browser local time)
-- Navbar toggle → `manual` mode + `data-theme` on `<html>`
+- Auto by default: **light** 07:00–19:00, **dark** otherwise (local hour via `Intl` timezone)
+- Navbar toggle → `manual` mode + `data-theme` on `<html>`; double-click toggle restores `auto`
 - Utilities: [`themeUtils.ts`](../src/lib/theme/themeUtils.ts), hook [`useTheme.ts`](../src/lib/theme/useTheme.ts)
 - Persistence: `portfolio-theme-mode` (`auto` \| `manual`), `portfolio-theme` (`light` \| `dark`)
-- Inline script in layout replicates logic before paint
+- Inline script in layout replicates logic before paint (including `Intl` hour resolution)
 - In `auto` mode, `useTheme` recalculates every 60s when crossing day/night
 
 ## Deploy

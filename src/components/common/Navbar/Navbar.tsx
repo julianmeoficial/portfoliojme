@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from 'react';
 import type { JSX } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -65,7 +65,7 @@ if (typeof window !== 'undefined') {
 
 export default function Navbar(): JSX.Element {
     const { t } = useLanguage();
-    const { theme, toggleTheme } = useTheme();
+    const { theme, toggleTheme, resetToAuto } = useTheme();
 
     const headerRef = useRef<HTMLDivElement>(null);
     const navRef = useRef<HTMLElement>(null);
@@ -76,6 +76,11 @@ export default function Navbar(): JSX.Element {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [active, setActive] = useState<NavHref>('#home');
+    const themeMounted = useSyncExternalStore(
+        () => () => {},
+        () => true,
+        () => false,
+    );
     useFocusTrap(mobileMenuRef, menuOpen);
 
     const navLinks: { label: string; href: NavHref }[] = [
@@ -202,11 +207,18 @@ export default function Navbar(): JSX.Element {
 
                         <button
                             onClick={toggleTheme}
+                            onDoubleClick={resetToAuto}
                             className={styles.iconBtn}
                             type="button"
-                            aria-label={theme === 'dark' ? t.nav.theme_light : t.nav.theme_dark}
+                            title={t.nav.theme_auto_hint}
+                            aria-label={themeMounted
+                                ? (theme === 'dark' ? t.nav.theme_light : t.nav.theme_dark)
+                                : t.nav.theme_dark}
+                            suppressHydrationWarning
                         >
-                            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                            {themeMounted
+                                ? (theme === 'dark' ? <SunIcon /> : <MoonIcon />)
+                                : <span className={styles.themeIconPlaceholder} aria-hidden="true" />}
                         </button>
 
                         <a
