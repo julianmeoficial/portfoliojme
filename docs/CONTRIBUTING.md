@@ -75,7 +75,7 @@ Projects without screenshots (GitHub only): set `screenshots: []` — see SkyGat
 2. Add an entry in [`src/data/certificates.ts`](../src/data/certificates.ts) with `title`, `issuer`, `category` (`coursera` | `aws` | `google` | `meta` | `other`), `pdf` path (`/certificates/...`), and `verificationUrl`.
 3. Optionally set `issuedAt` (e.g. `2025-06`).
 4. For Coursera specializations / multi-course credentials: set bilingual `description` and `courseCount`.
-5. Verify category filters, deck preview, open-PDF fallback, and verification link in the Certificates section.
+5. Verify category filters, swipe/click navigation, PDF preview, Expand lightbox, open-PDF fallback, and verification link in the Certificates section.
 
 While `certificates` is `[]`, the section shows an empty state (nav link remains available).
 

@@ -107,7 +107,7 @@ See [I18N.md](I18N.md) for the full guide (adding keys, banner behaviour, rules)
 - Categories: `coursera` | `aws` | `google` | `meta` | `other` — filter chips appear once entries exist
 - PDFs live in `public/certificates/` (e.g. `/certificates/{id}.pdf`)
 - Metadata stays in `certificates.ts` — same split as screenshots vs `projects.ts`
-- UI: Dia-style stacked deck in [`Certificates.tsx`](../src/components/sections/Certificates/Certificates.tsx) — category badge, title, optional description / course count, interactive PDF preview, verification link; empty state when the array is empty
+- UI: swipe deck in [`Certificates.tsx`](../src/components/sections/Certificates/Certificates.tsx) — each slide pairs metadata + PDF preview; category filters, click/drag navigation, dots, [`PdfLightbox`](../src/components/sections/Certificates/PdfLightbox.tsx) for expanded view; empty state when the array is empty
 
 ## GSAP
 

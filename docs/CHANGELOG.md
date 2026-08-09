@@ -6,15 +6,15 @@ Notable changes to this portfolio. For contribution workflow and conventions, se
 
 ### Added
 
-- **Certificates section** — Dia-style stacked deck between Skills and Contact. PDFs in `public/certificates/`; metadata in `src/data/certificates.ts` (starts empty). Interactive PDF preview, verification link, GSAP stack motion, i18n + nav `#certificates`.
+- **Certificates section** — Swipe deck between Skills and Contact. PDFs in `public/certificates/`; metadata in `src/data/certificates.ts`. Each slide pairs meta + PDF preview; click/drag navigation, dots, `PdfLightbox`, verification link, i18n + nav `#certificates`.
 - **Certificate categories** — `category` filter (`coursera`, `aws`, `google`, `meta`, `other`) plus optional `description` / `courseCount` for Coursera-style specializations.
 
 ### Files touched (Certificates)
 
 | Area | Files |
 | ---- | ----- |
-| Section UI | `Certificates.tsx`, `Certificates.module.css`, `index.ts` |
-| Data / assets | `src/data/certificates.ts`, `public/certificates/.gitkeep` |
+| Section UI | `Certificates.tsx`, `Certificates.module.css`, `PdfLightbox.tsx`, `PdfLightbox.module.css`, `formatters.ts`, `index.ts` |
+| Data / assets | `src/data/certificates.ts`, `public/certificates/` |
 | Integration | `page.tsx`, `Navbar.tsx` |
 | i18n | `types.ts`, `en.ts`, `es.ts` |
 | Docs | `ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md` |

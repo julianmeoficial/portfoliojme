@@ -10,6 +10,7 @@ import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
 import { useModalLock } from '@/lib/hooks/useModalLock';
 import { prefersReducedMotion, getMotionDuration } from '@/lib/motion/prefersReducedMotion';
 import type { Certificate } from '@/data/certificates';
+import { fillCounter, fillTitle } from './formatters';
 import styles from './PdfLightbox.module.css';
 
 if (typeof window !== 'undefined') {
@@ -37,16 +38,6 @@ function ChevronRight(): JSX.Element {
             <path d="M9 18l6-6-6-6" />
         </svg>
     );
-}
-
-function fillCounter(template: string, current: number, total: number): string {
-    return template
-        .replace('{current}', String(current))
-        .replace('{total}', String(total));
-}
-
-function fillLabel(template: string, title: string): string {
-    return template.replace('{title}', title);
 }
 
 export default function PdfLightbox({
@@ -106,7 +97,7 @@ export default function PdfLightbox({
     if (!active) return null;
 
     const counterLabel = fillCounter(t.certificates.counter, activeIndex + 1, total);
-    const dialogTitle = fillLabel(t.certificates.lightbox_label, active.title);
+    const dialogTitle = fillTitle(t.certificates.lightbox_label, active.title);
 
     const content = (
         <div
@@ -171,7 +162,7 @@ export default function PdfLightbox({
                     ref={frameRef}
                     className={styles.frame}
                     src={`${active.pdf}#view=FitH`}
-                    title={fillLabel(t.certificates.preview_label, active.title)}
+                    title={fillTitle(t.certificates.preview_label, active.title)}
                 />
 
                 {total > 1 ? (

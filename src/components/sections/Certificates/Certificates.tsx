@@ -28,6 +28,7 @@ import {
 } from '@/data/certificates';
 import type { CertificateCategory } from '@/data/certificates';
 import PdfLightbox from './PdfLightbox';
+import { fillCounter, fillCourseCount, fillTitle } from './formatters';
 import styles from './Certificates.module.css';
 
 if (typeof window !== 'undefined') {
@@ -36,23 +37,10 @@ if (typeof window !== 'undefined') {
 
 type CategoryFilter = CertificateCategory | 'all';
 
+/** Pointer travel before a click becomes a drag. */
 const DRAG_LOCK_PX = 6;
+/** Horizontal velocity (px/ms) that counts as a flick to the next/prev slide. */
 const VELOCITY_FLICK = 0.45;
-
-function fillCounter(template: string, current: number, total: number): string {
-    return template
-        .replace('{current}', String(current))
-        .replace('{total}', String(total));
-}
-
-function fillPreviewLabel(template: string, title: string): string {
-    return template.replace('{title}', title);
-}
-
-function fillCourseCount(one: string, many: string, count: number): string {
-    if (count === 1) return one;
-    return many.replace('{count}', String(count));
-}
 
 function getClosestIndex(
     track: HTMLDivElement,
@@ -125,7 +113,8 @@ export default function Certificates(): JSX.Element {
         setActiveIndex((prev) => (prev === index ? prev : index));
     }, []);
 
-    const updatePeek = useCallback((immediate = true): void => {
+    /** Distance-based opacity for peeking slides. No scale — Safari flickers when scaling iframe ancestors. */
+    const updatePeek = useCallback((): void => {
         const track = trackRef.current;
         if (!track || !total) return;
 
@@ -138,22 +127,10 @@ export default function Certificates(): JSX.Element {
             const slideCenter = rect.left + rect.width / 2;
             const distance = Math.abs(slideCenter - centerX) / Math.max(rect.width, 1);
             const tDist = Math.min(distance, 1);
-            // Opacity only — avoid scale on iframe ancestors (Safari flicker).
             const opacity = reduced ? 1 : Math.max(0.55, 1 - tDist * 0.38);
 
             gsap.killTweensOf(el);
-            if (immediate || reduced) {
-                gsap.set(el, { opacity, scale: 1, force3D: false });
-            } else {
-                gsap.to(el, {
-                    opacity,
-                    scale: 1,
-                    duration: getMotionDuration(0.4),
-                    ease: 'power2.out',
-                    overwrite: true,
-                    force3D: false,
-                });
-            }
+            gsap.set(el, { opacity, scale: 1, force3D: false });
         });
     }, [total]);
 
@@ -161,7 +138,7 @@ export default function Certificates(): JSX.Element {
         if (peekRaf.current !== null) return;
         peekRaf.current = window.requestAnimationFrame(() => {
             peekRaf.current = null;
-            updatePeek(true);
+            updatePeek();
         });
     }, [updatePeek]);
 
@@ -183,7 +160,7 @@ export default function Certificates(): JSX.Element {
             const targetLeft = getCenteredScrollLeft(track, slide);
             if (Math.abs(track.scrollLeft - targetLeft) < 1 && clamped === activeIndexRef.current) {
                 setIndexSafe(clamped);
-                updatePeek(true);
+                updatePeek();
                 return;
             }
 
@@ -198,7 +175,7 @@ export default function Certificates(): JSX.Element {
                 track.scrollLeft = targetLeft;
                 animatingRef.current = false;
                 setSnapEnabled(true);
-                updatePeek(true);
+                updatePeek();
                 return;
             }
 
@@ -214,9 +191,9 @@ export default function Certificates(): JSX.Element {
                 overwrite: true,
                 onUpdate: schedulePeek,
                 onComplete: () => {
-                    // Settle exactly, then restore snap on the next frame to avoid snap fights.
+                    // Settle exactly, then restore snap next frame to avoid snap fights.
                     track.scrollLeft = targetLeft;
-                    updatePeek(true);
+                    updatePeek();
                     window.requestAnimationFrame(() => {
                         animatingRef.current = false;
                         setSnapEnabled(true);
@@ -278,7 +255,7 @@ export default function Certificates(): JSX.Element {
 
         track.addEventListener('scroll', onScroll, { passive: true });
         setSnapEnabled(true);
-        updatePeek(true);
+        updatePeek();
 
         return () => {
             track.removeEventListener('scroll', onScroll);
@@ -286,7 +263,7 @@ export default function Certificates(): JSX.Element {
                 window.cancelAnimationFrame(peekRaf.current);
             }
         };
-    }, [schedulePeek, setIndexSafe, setSnapEnabled, updatePeek, visibleCertificates]);
+    }, [schedulePeek, setIndexSafe, setSnapEnabled, updatePeek, total]);
 
     useEffect(() => {
         const onResize = (): void => {
@@ -318,7 +295,7 @@ export default function Certificates(): JSX.Element {
             gsap.killTweensOf(track);
             track.scrollLeft = 0;
             setSnapEnabled(true);
-            updatePeek(true);
+            updatePeek();
         });
     };
 
@@ -341,9 +318,7 @@ export default function Certificates(): JSX.Element {
         if (target.closest('a, button')) return;
 
         const slide = target.closest('[data-slide-index]');
-        const startSlideIndex = slide
-            ? Number(slide.getAttribute('data-slide-index'))
-            : null;
+        const rawIndex = slide ? Number(slide.getAttribute('data-slide-index')) : NaN;
 
         gsap.killTweensOf(track);
         animatingRef.current = false;
@@ -356,7 +331,7 @@ export default function Certificates(): JSX.Element {
             lastTime: performance.now(),
             velocity: 0,
             dragging: false,
-            startSlideIndex: Number.isFinite(startSlideIndex) ? startSlideIndex : null,
+            startSlideIndex: Number.isNaN(rawIndex) ? null : rawIndex,
         };
         event.currentTarget.setPointerCapture(event.pointerId);
     };
@@ -410,7 +385,7 @@ export default function Certificates(): JSX.Element {
         if (!wasDragging) {
             setSnapEnabled(true);
 
-            // Gallery click: peek card → that cert; active card left/right half → prev/next.
+            // Peek card → that cert; active card left/right half → prev/next.
             if (
                 startSlideIndex !== null &&
                 startSlideIndex >= 0 &&
@@ -553,7 +528,7 @@ export default function Certificates(): JSX.Element {
                                             aria-label={
                                                 isActive
                                                     ? undefined
-                                                    : fillPreviewLabel(
+                                                    : fillTitle(
                                                           t.certificates.select_certificate,
                                                           cert.title,
                                                       )
@@ -596,7 +571,7 @@ export default function Certificates(): JSX.Element {
                                                         <iframe
                                                             className={styles.preview}
                                                             src={`${cert.pdf}#view=FitH`}
-                                                            title={fillPreviewLabel(
+                                                            title={fillTitle(
                                                                 t.certificates.preview_label,
                                                                 cert.title,
                                                             )}
