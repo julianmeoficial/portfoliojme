@@ -63,7 +63,7 @@
 }
 
 .closeBtn:hover {
-    background: var(--glass-bg-hover);
+    background: var(--overlay-control-bg-hover);
     transform: rotate(90deg);
 }
 
@@ -106,7 +106,7 @@
 }
 
 .navBtn:hover:not(:disabled) {
-    background: var(--glass-bg-hover);
+    background: var(--overlay-control-bg-hover);
 }
 
 .navBtn:disabled {
@@ -143,7 +143,7 @@
 }
 
 .openPdf:hover {
-    background: var(--glass-bg-hover);
+    background: var(--overlay-control-bg-hover);
 }
 
 @media (max-width: 640px) {

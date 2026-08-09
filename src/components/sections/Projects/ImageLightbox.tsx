@@ -197,42 +197,47 @@ export default function ImageLightbox({
                 {dialogTitle}
             </h2>
 
+            {/* Chrome is a sibling of the image — viewport-anchored, never under the stage. */}
+            <button
+                type="button"
+                className={styles.closeBtn}
+                onClick={onClose}
+                aria-label={t.projects.lightbox_close}
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            {screenshots.length > 1 && (
+                <>
+                    <button
+                        type="button"
+                        className={`${styles.navBtn} ${styles.navPrev}`}
+                        onClick={() => onNavigate(activeIndex - 1)}
+                        disabled={activeIndex === 0}
+                        aria-label={t.projects.gallery_prev}
+                    >
+                        <ChevronLeft />
+                    </button>
+                    <button
+                        type="button"
+                        className={`${styles.navBtn} ${styles.navNext}`}
+                        onClick={() => onNavigate(activeIndex + 1)}
+                        disabled={activeIndex === screenshots.length - 1}
+                        aria-label={t.projects.gallery_next}
+                    >
+                        <ChevronRight />
+                    </button>
+                </>
+            )}
+
+            <span className={styles.counter} aria-live="polite">
+                {slideLabel}
+            </span>
+
             <div className={styles.content}>
-                {screenshots.length > 1 && (
-                    <>
-                        <button
-                            type="button"
-                            className={`${styles.navBtn} ${styles.navPrev}`}
-                            onClick={() => onNavigate(activeIndex - 1)}
-                            disabled={activeIndex === 0}
-                            aria-label={t.projects.gallery_prev}
-                        >
-                            <ChevronLeft />
-                        </button>
-                        <button
-                            type="button"
-                            className={`${styles.navBtn} ${styles.navNext}`}
-                            onClick={() => onNavigate(activeIndex + 1)}
-                            disabled={activeIndex === screenshots.length - 1}
-                            aria-label={t.projects.gallery_next}
-                        >
-                            <ChevronRight />
-                        </button>
-                    </>
-                )}
-
-                <button
-                    type="button"
-                    className={styles.closeBtn}
-                    onClick={onClose}
-                    aria-label={t.projects.lightbox_close}
-                >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-
                 <div ref={stageRef} className={styles.imageStage}>
                     {[0, 1].map((bufferIndex) => (
                         <div
@@ -254,10 +259,6 @@ export default function ImageLightbox({
                         </div>
                     ))}
                 </div>
-
-                <span className={styles.counter} aria-live="polite">
-                    {slideLabel}
-                </span>
             </div>
         </div>
     );

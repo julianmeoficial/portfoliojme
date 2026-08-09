@@ -8,7 +8,11 @@
     background: var(--overlay-scrim-strong);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    padding: clamp(var(--space-4), 4vw, var(--space-10));
+    /* Side/top gutters keep chrome outside the image. */
+    padding:
+        var(--space-16)
+        var(--space-16)
+        var(--space-12);
     cursor: zoom-out;
 }
 
@@ -26,23 +30,24 @@
 
 .content {
     position: relative;
+    z-index: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: min(1200px, 95vw);
-    max-height: 90vh;
+    justify-content: center;
+    width: min(1100px, 100%);
+    max-height: 100%;
     cursor: default;
 }
 
 .imageStage {
     position: relative;
-    width: min(1200px, 95vw);
+    width: 100%;
     aspect-ratio: 16 / 10;
-    max-height: min(85vh, 100%);
+    max-height: min(78vh, 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 0;
 }
 
 .imageLayer {
@@ -72,13 +77,11 @@
     box-shadow: var(--shadow-md);
 }
 
-.closeBtn {
+/* Viewport-anchored chrome — never nested under the image stage. */
+.closeBtn,
+.navBtn {
     position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-    z-index: 2;
-    width: 40px;
-    height: 40px;
+    z-index: 10;
     border-radius: 50%;
     background: var(--overlay-control-bg);
     border: 1px solid var(--overlay-control-border);
@@ -87,93 +90,117 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color var(--transition-fast), transform var(--transition-fast);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm);
+    transition:
+        background-color var(--transition-fast),
+        transform var(--transition-fast),
+        opacity var(--transition-fast);
+}
+
+.closeBtn {
+    top: var(--space-5);
+    right: var(--space-5);
+    width: 48px;
+    height: 48px;
 }
 
 .closeBtn:hover {
-    background: var(--glass-bg-hover);
+    background: var(--overlay-control-bg-hover);
     transform: rotate(90deg);
 }
 
+.closeBtn:focus-visible,
+.navBtn:focus-visible {
+    outline: 2px solid var(--overlay-text);
+    outline-offset: 3px;
+}
+
 .closeBtn svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
 }
 
 .counter {
     position: absolute;
-    bottom: var(--space-3);
+    z-index: 10;
+    bottom: var(--space-5);
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--overlay-text);
     background: var(--overlay-scrim);
-    backdrop-filter: blur(8px);
-    padding: var(--space-1) var(--space-4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--overlay-control-border);
+    padding: var(--space-2) var(--space-5);
     border-radius: var(--radius-full);
     pointer-events: none;
+    white-space: nowrap;
 }
 
 .navBtn {
-    position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 2;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--overlay-control-bg);
-    border: 1px solid var(--overlay-control-border);
-    color: var(--overlay-text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color var(--transition-fast);
+    width: 48px;
+    height: 48px;
 }
 
 .navBtn:hover:not(:disabled) {
-    background: var(--glass-bg-hover);
+    background: var(--overlay-control-bg-hover);
 }
 
 .navBtn:disabled {
-    opacity: 0.3;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
 .navPrev {
-    left: var(--space-3);
+    left: var(--space-5);
 }
 
 .navNext {
-    right: var(--space-3);
+    right: var(--space-5);
 }
 
-@media (max-width: 640px) {
-    .navBtn {
-        width: 36px;
-        height: 36px;
+.navBtn svg {
+    width: 22px;
+    height: 22px;
+}
+
+@media (max-width: 768px) {
+    .overlay {
+        padding:
+            var(--space-14)
+            var(--space-4)
+            var(--space-12);
     }
 
     .closeBtn {
-        top: var(--space-2);
-        right: var(--space-2);
-        width: 36px;
-        height: 36px;
+        top: var(--space-4);
+        right: var(--space-4);
+        width: 44px;
+        height: 44px;
+    }
+
+    .navBtn {
+        width: 44px;
+        height: 44px;
     }
 
     .navPrev {
-        left: var(--space-2);
+        left: var(--space-3);
     }
 
     .navNext {
-        right: var(--space-2);
+        right: var(--space-3);
     }
 
     .counter {
-        bottom: var(--space-2);
+        bottom: var(--space-4);
         font-size: var(--text-xs);
+        padding: var(--space-1) var(--space-4);
     }
 }

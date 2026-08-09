@@ -107,8 +107,9 @@
   --overlay-scrim: rgba(0, 0, 0, 0.55);
   --overlay-scrim-strong: rgba(0, 0, 0, 0.85);
   --overlay-text: rgba(255, 255, 255, 0.9);
-  --overlay-control-bg: rgba(255, 255, 255, 0.12);
-  --overlay-control-border: rgba(255, 255, 255, 0.2);
+  --overlay-control-bg: rgba(255, 255, 255, 0.16);
+  --overlay-control-border: rgba(255, 255, 255, 0.32);
+  --overlay-control-bg-hover: rgba(255, 255, 255, 0.28);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -153,11 +154,13 @@
   --glass-bg-hover: rgba(255, 255, 255, 0.65);
   --glass-border-hover: rgba(0, 0, 0, 0.1);
 
+  /* Overlays always sit on a dark scrim — keep light controls in both themes. */
   --overlay-scrim: rgba(0, 0, 0, 0.45);
   --overlay-scrim-strong: rgba(0, 0, 0, 0.8);
   --overlay-text: rgba(255, 255, 255, 0.95);
-  --overlay-control-bg: rgba(0, 0, 0, 0.08);
-  --overlay-control-border: rgba(0, 0, 0, 0.12);
+  --overlay-control-bg: rgba(255, 255, 255, 0.16);
+  --overlay-control-border: rgba(255, 255, 255, 0.32);
+  --overlay-control-bg-hover: rgba(255, 255, 255, 0.28);
 }
 
 /* ═══════════════════════════════════════════════════════
