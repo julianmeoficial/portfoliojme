@@ -7,6 +7,7 @@ Notable changes to this portfolio. For contribution workflow and conventions, se
 ### Fixed
 
 - **Theme auto / toggle** — Local hour now uses `Intl` timezone (aligned with locale detection). Toggle reads DOM instead of stale React state; double-click Navbar sun/moon restores `auto` mode. Hydration flicker on theme icon fixed with mount guard.
+- **Language toggle** — Segmented ES/EN control with sliding pill (`transform`) and design-token motion; respects `prefers-reduced-motion`.
 
 ### Added
 
