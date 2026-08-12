@@ -599,7 +599,7 @@ export default function Certificates(): JSX.Element {
                                                                     t.certificates.preview_label,
                                                                     cert.title,
                                                                 )}
-                                                                loading="lazy"
+                                                                loading={isActive ? 'eager' : 'lazy'}
                                                                 tabIndex={isActive ? 0 : -1}
                                                             />
                                                         )}

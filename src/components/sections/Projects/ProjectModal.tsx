@@ -11,6 +11,7 @@ import { prefersReducedMotion, getMotionDuration } from '@/lib/motion/prefersRed
 import type { Project } from '@/data/projects';
 import ProjectGallery from './ProjectGallery';
 import ImageLightbox from './ImageLightbox';
+import { preloadScreenshots } from './preloadScreenshots';
 import styles from './ProjectModal.module.css';
 
 interface ProjectModalProps {
@@ -108,6 +109,17 @@ export default function ProjectModal({
         );
     }, { scope: overlayRef });
 
+    useEffect(() => {
+        if (project.screenshots.length > 0) {
+            preloadScreenshots(project.screenshots, 0);
+        }
+    }, [project.id, project.screenshots]);
+
+    const handleExpand = useCallback((index: number): void => {
+        preloadScreenshots(project.screenshots, index);
+        setLightboxIndex(index);
+    }, [project.screenshots]);
+
     const handleOverlayClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget && !isLightboxOpen) requestClose();
     }, [isLightboxOpen, requestClose]);
@@ -150,7 +162,7 @@ export default function ProjectModal({
                             key={project.id}
                             projectTitle={project.title}
                             screenshots={project.screenshots}
-                            onExpand={(index) => setLightboxIndex(index)}
+                            onExpand={handleExpand}
                         />
 
                         <div className={styles.infoSection}>

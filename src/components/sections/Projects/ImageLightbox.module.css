@@ -43,6 +43,7 @@
 .imageStage {
     position: relative;
     width: 100%;
+    min-height: min(40vh, 24rem);
     aspect-ratio: 16 / 10;
     max-height: min(78vh, 100%);
     display: flex;

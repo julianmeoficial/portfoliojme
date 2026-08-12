@@ -64,6 +64,11 @@
     outline-offset: 2px;
 }
 
+.slide[aria-hidden='true'] {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 28rem;
+}
+
 .slideImageWrapper {
     width: 100%;
     aspect-ratio: 16 / 10;

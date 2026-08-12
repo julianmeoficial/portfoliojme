@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type JSX } from 'react';
+import { useCallback, useState, type JSX } from 'react';
 import Skeleton from '../Skeleton';
 import styles from './ImageWithSkeleton.module.css';
 
@@ -27,6 +27,12 @@ function ImageWithSkeletonInner({
 }: ImageWithSkeletonProps): JSX.Element {
     const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
 
+    const imgRef = useCallback((img: HTMLImageElement | null): void => {
+        if (img?.complete && img.naturalWidth > 0) {
+            setStatus('loaded');
+        }
+    }, []);
+
     return (
         <div className={`${styles.wrapper} ${wrapperClassName ?? ''}`}>
             {status === 'loading' && (
@@ -43,6 +49,7 @@ function ImageWithSkeletonInner({
             ) : (
                 // eslint-disable-next-line @next/next/no-img-element -- onLoad skeleton requires native img
                 <img
+                    ref={imgRef}
                     src={src}
                     alt={alt}
                     loading={loading}
