@@ -7,6 +7,7 @@ import {
     useMemo,
     useRef,
     useState,
+    useSyncExternalStore,
     type JSX,
     type KeyboardEvent,
     type PointerEvent as ReactPointerEvent,
@@ -32,10 +33,22 @@ import { fillCounter, fillCourseCount, fillTitle } from './formatters';
 import styles from './Certificates.module.css';
 
 if (typeof window !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, useGSAP);
+    gsap.registerPlugin(ScrollTrigger);
 }
 
 type CategoryFilter = CertificateCategory | 'all';
+
+function useCoarsePointer(): boolean {
+    return useSyncExternalStore(
+        (onStoreChange) => {
+            const mq = window.matchMedia('(hover: none) and (pointer: coarse)');
+            mq.addEventListener('change', onStoreChange);
+            return () => mq.removeEventListener('change', onStoreChange);
+        },
+        () => window.matchMedia('(hover: none) and (pointer: coarse)').matches,
+        () => false,
+    );
+}
 
 /** Pointer travel before a click becomes a drag. */
 const DRAG_LOCK_PX = 6;
@@ -69,6 +82,7 @@ function getCenteredScrollLeft(track: HTMLDivElement, slide: HTMLElement): numbe
 
 export default function Certificates(): JSX.Element {
     const { t, language } = useLanguage();
+    const isCoarsePointer = useCoarsePointer();
     const sectionRef = useRef<HTMLElement>(null);
     const trackRef = useRef<HTMLDivElement>(null);
     const slideRefs = useRef<(HTMLElement | null)[]>([]);
@@ -568,16 +582,27 @@ export default function Certificates(): JSX.Element {
                                                     </header>
 
                                                     <div className={styles.previewShell}>
-                                                        <iframe
-                                                            className={styles.preview}
-                                                            src={`${cert.pdf}#view=FitH`}
-                                                            title={fillTitle(
-                                                                t.certificates.preview_label,
-                                                                cert.title,
-                                                            )}
-                                                            loading={index === 0 ? 'eager' : 'lazy'}
-                                                            tabIndex={isActive ? 0 : -1}
-                                                        />
+                                                        {isCoarsePointer ? (
+                                                            <div className={styles.previewFallback} aria-hidden="true">
+                                                                <DocumentTextIcon
+                                                                    width={40}
+                                                                    height={40}
+                                                                    aria-hidden="true"
+                                                                />
+                                                                <span>{t.certificates.open_pdf}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <iframe
+                                                                className={styles.preview}
+                                                                src={`${cert.pdf}#view=FitH`}
+                                                                title={fillTitle(
+                                                                    t.certificates.preview_label,
+                                                                    cert.title,
+                                                                )}
+                                                                loading="lazy"
+                                                                tabIndex={isActive ? 0 : -1}
+                                                            />
+                                                        )}
 
                                                         <div
                                                             className={styles.dragLayer}

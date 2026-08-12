@@ -13,10 +13,6 @@ import ProjectGallery from './ProjectGallery';
 import ImageLightbox from './ImageLightbox';
 import styles from './ProjectModal.module.css';
 
-if (typeof window !== 'undefined') {
-    gsap.registerPlugin(useGSAP);
-}
-
 interface ProjectModalProps {
     project: Project;
     onClose: () => void;

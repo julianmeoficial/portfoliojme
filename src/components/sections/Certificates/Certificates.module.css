@@ -399,6 +399,22 @@
     pointer-events: none;
 }
 
+.previewFallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    width: 100%;
+    height: 100%;
+    padding: var(--space-6);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-align: center;
+    background: var(--color-surface-offset);
+}
+
 .dragLayer {
     position: absolute;
     inset: 0;

@@ -115,6 +115,18 @@
     100% { transform: translateY(-15%) scale(1.1) rotate(5deg); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .liquidBlob {
+        animation: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .liquidBlob:nth-child(2) {
+        display: none;
+    }
+}
+
 /* ── Card Content ── */
 .cardContent {
     position: relative;

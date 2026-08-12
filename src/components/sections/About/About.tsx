@@ -10,7 +10,7 @@ import { prefersReducedMotion } from '@/lib/motion/prefersReducedMotion';
 import styles from './About.module.css';
 
 if (typeof window !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, useGSAP);
+    gsap.registerPlugin(ScrollTrigger);
 }
 
 export default function About(): JSX.Element {
@@ -67,17 +67,19 @@ export default function About(): JSX.Element {
             ease: 'power3.out',
         });
 
-        gsap.to('.js-tech-1', {
-            y: -100,
-            scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
-        });
-        gsap.to('.js-tech-2', {
-            y: -180,
-            scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
-        });
-        gsap.to('.js-tech-3', {
-            y: -80,
-            scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
+        gsap.matchMedia().add('(min-width: 1024px)', () => {
+            gsap.to('.js-tech-1', {
+                y: -100,
+                scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
+            });
+            gsap.to('.js-tech-2', {
+                y: -180,
+                scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
+            });
+            gsap.to('.js-tech-3', {
+                y: -80,
+                scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
+            });
         });
     }, { scope: sectionRef });
 

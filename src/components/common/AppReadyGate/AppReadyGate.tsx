@@ -15,8 +15,8 @@ export default function AppReadyGate({ children }: AppReadyGateProps): JSX.Eleme
 
     useEffect(() => {
         if (ready) return;
-        const timer = window.setTimeout(() => setReady(true), 300);
-        return () => window.clearTimeout(timer);
+        const id = window.requestAnimationFrame(() => setReady(true));
+        return () => window.cancelAnimationFrame(id);
     }, [ready]);
 
     return (

@@ -59,10 +59,6 @@ function ArrowRight(): JSX.Element {
     );
 }
 
-if (typeof window !== 'undefined') {
-    gsap.registerPlugin(useGSAP);
-}
-
 export default function Navbar(): JSX.Element {
     const { t } = useLanguage();
     const { theme, toggleTheme, resetToAuto } = useTheme();
@@ -93,21 +89,23 @@ export default function Navbar(): JSX.Element {
     ];
 
     useEffect(() => {
+        const sectionNodes = NAV_HREFS.map((href) => ({
+            href,
+            el: document.querySelector(href),
+        })).filter((entry): entry is { href: NavHref; el: Element } => entry.el !== null);
+
         const onScroll = (): void => {
             setScrolled(window.scrollY > 30);
 
-            const sections = NAV_HREFS.map((href) => document.querySelector(href));
-
-            const current = sections.reduce<NavHref>((acc, el, i) => {
-                if (!el) return acc;
+            let current: NavHref = '#home';
+            for (const { href, el } of sectionNodes) {
                 const rect = el.getBoundingClientRect();
-                if (rect.top <= 120) return NAV_HREFS[i];
-                return acc;
-            }, '#home');
-
+                if (rect.top <= 120) current = href;
+            }
             setActive(current);
         };
 
+        onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
     }, []);

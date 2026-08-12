@@ -13,10 +13,6 @@ import type { Certificate } from '@/data/certificates';
 import { fillCounter, fillTitle } from './formatters';
 import styles from './PdfLightbox.module.css';
 
-if (typeof window !== 'undefined') {
-    gsap.registerPlugin(useGSAP);
-}
-
 interface PdfLightboxProps {
     certificates: Certificate[];
     activeIndex: number;

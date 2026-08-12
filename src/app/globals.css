@@ -1,7 +1,6 @@
-@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800,900&f[]=satoshi@300,400,500,700&display=swap');
-
 /* ─────────────────────────────────────────────────────────
    FONTS + FLUID TYPE SCALE + SPACING + RADIUS + EASING
+   (Cabinet Grotesk + Satoshi loaded via <link> in layout.tsx)
 ───────────────────────────────────────────────────────── */
 :root {
   /* Fonts */
@@ -84,6 +83,7 @@
 
   --color-primary:        #e6ddd0;
   --color-primary-active: #cec4b5;
+  --color-primary-glow:   rgba(230, 221, 208, 0.18);
 
   /* Liquid Glass Dark */
   --glass-bg:           rgba(25, 25, 28, 0.3); /* Base semitransparente oscura */
@@ -134,6 +134,7 @@
 
   --color-primary:        #1e1b14;
   --color-primary-active: #362f24;
+  --color-primary-glow:   rgba(30, 27, 20, 0.12);
 
   /* Liquid Glass Light */
   --glass-bg:           rgba(255, 255, 255, 0.5);

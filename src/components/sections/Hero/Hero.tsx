@@ -13,7 +13,6 @@ export default function Hero(): JSX.Element {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useGSAP(() => {
-        gsap.registerPlugin(useGSAP);
         const cards = gsap.utils.toArray('.js-card');
         const titleLines = gsap.utils.toArray('.js-title-line');
 

@@ -17,6 +17,10 @@ import {
 
 import styles from './Contact.module.css';
 
+if (typeof window !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+}
+
 const SOCIAL_LINKS = [
     { href: 'https://github.com/julianmeoficial', label: 'GitHub' },
     { href: 'https://linkedin.com/in/julianmeoficial', label: 'LinkedIn' },
@@ -34,8 +38,6 @@ export default function Contact(): JSX.Element {
     ];
 
     useGSAP(() => {
-        gsap.registerPlugin(ScrollTrigger, useGSAP);
-
         if (prefersReducedMotion()) {
             gsap.set('.js-contact-fade, .js-contact-card', { opacity: 1, y: 0, x: 0 });
             return;

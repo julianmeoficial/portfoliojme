@@ -18,7 +18,7 @@ import {
 import styles from './Skills.module.css';
 
 if (typeof window !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, useGSAP);
+    gsap.registerPlugin(ScrollTrigger);
 }
 
 const SKILL_CATEGORIES = [

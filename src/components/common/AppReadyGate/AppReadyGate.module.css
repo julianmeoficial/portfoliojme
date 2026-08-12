@@ -9,12 +9,6 @@
     transition: opacity var(--transition-base), visibility var(--transition-base);
 }
 
-.gateDone {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
 .logo {
     font-family: var(--font-display);
     font-size: var(--text-xl);

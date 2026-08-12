@@ -22,7 +22,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 if (typeof window !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, useGSAP);
+    gsap.registerPlugin(ScrollTrigger);
 }
 
 const PROJECT_ICONS: Record<string, React.ElementType> = {

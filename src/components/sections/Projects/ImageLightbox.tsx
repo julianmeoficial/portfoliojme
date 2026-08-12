@@ -18,10 +18,6 @@ import { prefersReducedMotion, getMotionDuration } from '@/lib/motion/prefersRed
 import { decodeScreenshot, preloadScreenshots } from './preloadScreenshots';
 import styles from './ImageLightbox.module.css';
 
-if (typeof window !== 'undefined') {
-    gsap.registerPlugin(useGSAP);
-}
-
 interface ImageLightboxProps {
     projectTitle: string;
     screenshots: string[];

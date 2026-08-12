@@ -1,12 +1,21 @@
 const preloaded = new Set<string>();
 
-/** Warm the browser cache for the active slide and its neighbors. */
-export function preloadScreenshots(urls: string[], center: number): void {
-    const indices = [center - 1, center, center + 1].filter(
-        (i) => i >= 0 && i < urls.length,
-    );
+function shouldPreloadNeighbors(): boolean {
+    if (typeof window === 'undefined') return true;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (conn?.saveData) return false;
+    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+}
 
-    for (const i of indices) {
+/** Warm the browser cache for the active slide and optionally its neighbors. */
+export function preloadScreenshots(urls: string[], center: number): void {
+    const indices = shouldPreloadNeighbors()
+        ? [center - 1, center, center + 1]
+        : [center];
+
+    const filtered = indices.filter((i) => i >= 0 && i < urls.length);
+
+    for (const i of filtered) {
         const url = urls[i];
         if (!url || preloaded.has(url)) continue;
         preloaded.add(url);
