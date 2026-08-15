@@ -47,7 +47,7 @@ export const en: Translations = {
         section_background: 'Background',
         section_focus: 'Current Focus',
         paragraph1:
-            "I'm a 6th-semester Software Engineering student at the University of Cartagena, Colombia. I focus on frontend and full-stack development, building modular platforms like SkyVault and SelanFlow using React, TypeScript, Next.js, and Spring Boot.",
+            "I'm a 7th-semester Software Engineering student at the University of Cartagena, Colombia. I focus on frontend and full-stack development, building modular platforms like SkyVault and SelanFlow using React, TypeScript, Next.js, and Spring Boot.",
         paragraph2:
             "I am deeply passionate about UI/UX design and crafting fluid interfaces. In my free time, I help fellow students by teaching a basic introductory course on Java and Spring Boot fundamentals. I'm always eager to learn, share knowledge, and take on new technical challenges.",
         cta_github: 'View GitHub',

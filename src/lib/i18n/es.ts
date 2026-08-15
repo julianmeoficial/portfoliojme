@@ -47,7 +47,7 @@ export const es: Translations = {
         section_background: 'Trayectoria',
         section_focus: 'Enfoque actual',
         paragraph1:
-            'Soy estudiante de 6.º semestre de Ingeniería de Software en la Universidad de Cartagena, Colombia. Me enfoco en el desarrollo frontend y full-stack, construyendo plataformas modulares como SkyVault y SelanFlow utilizando React, TypeScript, Next.js y Spring Boot.',
+            'Soy estudiante de 7.º semestre de Ingeniería de Software en la Universidad de Cartagena, Colombia. Me enfoco en el desarrollo frontend y full-stack, construyendo plataformas modulares como SkyVault y SelanFlow utilizando React, TypeScript, Next.js y Spring Boot.',
         paragraph2:
             'Me apasiona profundamente el diseño UI/UX y la creación de interfaces fluidas. En mi tiempo libre, ayudo a otros compañeros de la universidad impartiendo un curso básico para introducirlos a los fundamentos de Java y Spring Boot. Siempre busco aprender, compartir conocimiento y asumir nuevos retos técnicos.',
         cta_github: 'Ver GitHub',
