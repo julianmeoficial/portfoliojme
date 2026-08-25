@@ -98,14 +98,14 @@ export const certificates: Certificate[] = [
     {
         id: 'intro-to-supabase',
         title: 'Intro to Supabase',
-        issuer: 'Supabase',
+        issuer: 'Scrimba',
         category: 'coursera',
         pdf: '/certificates/intro-to-supabase.pdf',
         verificationUrl: 'https://coursera.org/share/e7eb86a09eea0956f717fb7d741df040',
         issuedAt: '2026-08',
         description: {
-            es: 'Curso de Coursera sobre Supabase: creación de proyectos y tablas, consultas SQL, integración en la UI y suscripciones en tiempo real para mantener los datos sincronizados.',
-            en: 'Coursera course on Supabase: project and table setup, SQL queries, UI integration, and real-time subscriptions to keep app data in sync.',
+            es: 'Curso de Coursera (Scrimba) sobre Supabase: creación de proyectos y tablas, consultas SQL, integración en la UI y suscripciones en tiempo real para mantener los datos sincronizados.',
+            en: 'Coursera course (Scrimba) on Supabase: project and table setup, SQL queries, UI integration, and real-time subscriptions to keep app data in sync.',
         },
     },
 ];
