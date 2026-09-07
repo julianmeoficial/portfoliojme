@@ -192,6 +192,20 @@ const certificatesRaw: Certificate[] = [
             en: 'Coursera course (Microsoft) on user experience design: research and user needs, design-thinking ideation, storyboards, user flows, journey maps, and information architecture.',
         },
     },
+    {
+        id: 'introduction-to-containers-docker-kubernetes-openshift',
+        title: 'Introduction to Containers w/ Docker, Kubernetes & OpenShift',
+        issuer: 'IBM',
+        category: 'coursera',
+        track: 'it',
+        pdf: '/certificates/introduction-to-containers-docker-kubernetes-openshift.pdf',
+        verificationUrl: 'https://coursera.org/verify/JN2TBQUJXP2C',
+        issuedAt: '2026-09',
+        description: {
+            es: 'Curso de Coursera (IBM) sobre contenedores: imágenes Docker, orquestación con Kubernetes (pods, deployments, ReplicaSets), OpenShift y despliegue cloud-native.',
+            en: 'Coursera course (IBM) on containers: Docker images, Kubernetes orchestration (pods, deployments, ReplicaSets), OpenShift, and cloud-native deployment.',
+        },
+    },
 ];
 
 /** Certificates in display order (IT → language → other, newest first). */

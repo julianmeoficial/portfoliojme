@@ -7,6 +7,7 @@ Notable changes to this portfolio. For contribution workflow and conventions, se
 ### Added
 
 - **Microsoft UX certificates** — `Fundamentals of UI/UX Design` and `Designing for User Experience` (Coursera / Microsoft) with PDFs, verification URLs, bilingual descriptions, and `issuedAt`.
+- **IBM containers certificate** — `Introduction to Containers w/ Docker, Kubernetes & OpenShift` (Coursera / IBM), PDF, verification URL, bilingual description, `track: 'it'`, `issuedAt: '2026-09'`.
 - **Certificate tracks (internal sort)** — Required `track` on each entry (`it` | `language` | `other`). Deck order is computed by `sortCertificates`: IT → language → other, then newest `issuedAt`, then `id`. Not exposed as UI filters or labels; visitors only swipe the ordered deck. New entries can be appended anywhere in the source array.
 
 ### Changed
