@@ -4,10 +4,14 @@ import type { Language } from '@/lib/i18n/types';
  * Certificate showcase data.
  *
  * 1. Place the PDF in `public/certificates/` (e.g. `course-name.pdf`).
- * 2. Add an entry below with matching `pdf` path, `verificationUrl`, and `category`.
+ * 2. Add an entry below with matching `pdf` path, `verificationUrl`, `category`, and `track`.
  *
  * For Coursera specializations, fill `description` (ES/EN) and `courseCount`
  * (how many courses you completed to earn the credential).
+ *
+ * Display order is computed by `sortCertificates` (not array order):
+ * track `it` → `language` → `other`, then newest `issuedAt` first.
+ * The UI does not expose track — visitors only swipe the ordered deck.
  *
  * The Certificates section renders an empty state while this array is empty.
  *
@@ -17,6 +21,7 @@ import type { Language } from '@/lib/i18n/types';
  *   title: 'Google UX Design Professional Certificate',
  *   issuer: 'Google',
  *   category: 'coursera',
+ *   track: 'it',
  *   pdf: '/certificates/google-ux-design.pdf',
  *   verificationUrl: 'https://www.coursera.org/account/accomplishments/…',
  *   issuedAt: '2025-06',
@@ -34,6 +39,14 @@ export type CertificateCategory =
     | 'meta'
     | 'other';
 
+/**
+ * Topic bucket for internal deck order (not shown in the UI).
+ * - `it` — programming, cloud, UX/UI, security, developer tooling
+ * - `language` — language learning
+ * - `other` — everything else
+ */
+export type CertificateTrack = 'it' | 'language' | 'other';
+
 /** Canonical category order for filters and grouping. */
 export const CERTIFICATE_CATEGORIES: readonly CertificateCategory[] = [
     'coursera',
@@ -43,17 +56,29 @@ export const CERTIFICATE_CATEGORIES: readonly CertificateCategory[] = [
     'other',
 ] as const;
 
+/** Canonical track order for deck sorting. */
+export const CERTIFICATE_TRACKS: readonly CertificateTrack[] = [
+    'it',
+    'language',
+    'other',
+] as const;
+
 export interface Certificate {
     id: string;
     title: string;
     issuer: string;
     /** Platform / provider bucket for filtering (Coursera, AWS, …). */
     category: CertificateCategory;
+    /**
+     * Topic bucket for internal sort only — not rendered as a filter or label.
+     * Prefer `it` for programming / cloud / UX / security credentials.
+     */
+    track: CertificateTrack;
     /** Public path, e.g. `/certificates/aws-cloud-practitioner.pdf` */
     pdf: string;
     /** Credential / badge verification URL */
     verificationUrl: string;
-    /** Optional issue date, e.g. `2025-06` */
+    /** Optional issue date, e.g. `2025-06` — used as secondary sort key */
     issuedAt?: string;
     /**
      * Optional bilingual blurb — useful for Coursera specializations
@@ -67,14 +92,43 @@ export interface Certificate {
     courseCount?: number;
 }
 
-export const certificates: Certificate[] = [
+const TRACK_RANK: Record<CertificateTrack, number> = {
+    it: 0,
+    language: 1,
+    other: 2,
+};
+
+/**
+ * Stable deck order: track (IT → language → other), then newest `issuedAt`,
+ * then `id`. Entries without `issuedAt` sort after dated ones in the same track.
+ */
+export function sortCertificates(list: Certificate[]): Certificate[] {
+    return [...list].sort((a, b) => {
+        const trackDiff = TRACK_RANK[a.track] - TRACK_RANK[b.track];
+        if (trackDiff !== 0) return trackDiff;
+
+        const dateA = a.issuedAt ?? '';
+        const dateB = b.issuedAt ?? '';
+        if (dateA !== dateB) {
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateB.localeCompare(dateA);
+        }
+
+        return a.id.localeCompare(b.id);
+    });
+}
+
+const certificatesRaw: Certificate[] = [
     {
         id: 'learn-english-beginning-grammar',
         title: 'Learn English: Beginning Grammar',
         issuer: 'University of California, Irvine',
         category: 'coursera',
+        track: 'language',
         pdf: '/certificates/learn-english-beginning-grammar.pdf',
         verificationUrl: 'https://coursera.org/verify/specialization/VW7VGZE1310G',
+        issuedAt: '2026-07',
         description: {
             es: 'Especialización de Coursera (UC Irvine) sobre gramática inglesa básica: formas de palabras, tiempos verbales y formación de preguntas.',
             en: 'Coursera specialization (UC Irvine) on beginning English grammar: word forms, verb tenses, and question formation.',
@@ -86,6 +140,7 @@ export const certificates: Certificate[] = [
         title: 'Energy Production, Distribution & Safety',
         issuer: 'University at Buffalo',
         category: 'coursera',
+        track: 'other',
         pdf: '/certificates/energy-production-distribution-safety.pdf',
         verificationUrl: 'https://coursera.org/verify/specialization/B3MB63MK1JVW',
         issuedAt: '2026-02',
@@ -100,6 +155,7 @@ export const certificates: Certificate[] = [
         title: 'Intro to Supabase',
         issuer: 'Scrimba',
         category: 'coursera',
+        track: 'it',
         pdf: '/certificates/intro-to-supabase.pdf',
         verificationUrl: 'https://coursera.org/share/e7eb86a09eea0956f717fb7d741df040',
         issuedAt: '2026-08',
@@ -113,6 +169,7 @@ export const certificates: Certificate[] = [
         title: 'Fundamentals of UI/UX Design',
         issuer: 'Microsoft',
         category: 'coursera',
+        track: 'it',
         pdf: '/certificates/fundamentals-of-ui-ux-design.pdf',
         verificationUrl: 'https://coursera.org/verify/YF1GYHBZAI8T',
         issuedAt: '2026-07',
@@ -126,6 +183,7 @@ export const certificates: Certificate[] = [
         title: 'Designing for User Experience',
         issuer: 'Microsoft',
         category: 'coursera',
+        track: 'it',
         pdf: '/certificates/designing-for-user-experience.pdf',
         verificationUrl: 'https://coursera.org/verify/QU11RZ60ZJ0L',
         issuedAt: '2026-07',
@@ -135,6 +193,9 @@ export const certificates: Certificate[] = [
         },
     },
 ];
+
+/** Certificates in display order (IT → language → other, newest first). */
+export const certificates: Certificate[] = sortCertificates(certificatesRaw);
 
 /** Categories that currently have at least one certificate. */
 export function getUsedCertificateCategories(
@@ -148,6 +209,6 @@ export function filterCertificatesByCategory(
     category: CertificateCategory | 'all',
     list: Certificate[] = certificates,
 ): Certificate[] {
-    if (category === 'all') return list;
-    return list.filter((c) => c.category === category);
+    const filtered = category === 'all' ? list : list.filter((c) => c.category === category);
+    return sortCertificates(filtered);
 }

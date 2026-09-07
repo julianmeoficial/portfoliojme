@@ -143,10 +143,13 @@ Current projects: **SkyVault**, **SelanFlow**, **SkyGate**, **ODC Simulator**, *
 
 Edit only [`src/data/certificates.ts`](src/data/certificates.ts):
 
-- Required: `title`, `issuer`, `category` (`coursera` | `aws` | `google` | `meta` | `other`), `pdf` path, `verificationUrl`
+- Required: `title`, `issuer`, `category` (`coursera` | `aws` | `google` | `meta` | `other`), `track` (`it` | `language` | `other`), `pdf` path, `verificationUrl`
 - Optional: `issuedAt`, bilingual `description`, `courseCount` (Coursera specializations)
+- Deck order is internal: `track` IT → language → other, then newest `issuedAt` — not shown as UI filters/labels
+- Prefer `track: 'it'` for programming, cloud, UX/UI, security, and developer tooling
 - PDFs in `public/certificates/`
 - Array may be empty — section shows empty state until entries exist
+- New entries can be appended anywhere; `sortCertificates` ignores source order
 
 ---
 
