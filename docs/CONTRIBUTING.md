@@ -72,10 +72,12 @@ Projects without screenshots (GitHub only): set `screenshots: []` — see SkyGat
 ## Adding a certificate
 
 1. Add the PDF in `public/certificates/` (e.g. `{id}.pdf`).
-2. Add an entry in [`src/data/certificates.ts`](../src/data/certificates.ts) with `title`, `issuer`, `category` (`coursera` | `aws` | `google` | `meta` | `other`), `pdf` path (`/certificates/...`), and `verificationUrl`.
-3. Optionally set `issuedAt` (e.g. `2025-06`).
+2. Add an entry in [`src/data/certificates.ts`](../src/data/certificates.ts) with `title`, `issuer`, `category` (`coursera` | `aws` | `google` | `meta` | `other`), `track` (`it` | `language` | `other`), `pdf` path (`/certificates/...`), and `verificationUrl`.
+3. Set `issuedAt` when known (e.g. `2025-06`) — used as secondary sort within the same `track`.
 4. For Coursera specializations / multi-course credentials: set bilingual `description` and `courseCount`.
-5. Verify category filters, swipe/click navigation, PDF preview, Expand lightbox, open-PDF fallback, and verification link in the Certificates section.
+5. Prefer `track: 'it'` for programming, cloud, UX/UI, security, and developer tooling; `language` for language courses; `other` for everything else. Track is internal only — visitors do not see it as a filter or label.
+6. You can append the entry anywhere in the array; `sortCertificates` orders the deck as IT → language → other, then newest date first.
+7. Verify category filters, swipe/click navigation, PDF preview, Expand lightbox, open-PDF fallback, and verification link in the Certificates section.
 
 While `certificates` is `[]`, the section shows an empty state (nav link remains available).
 

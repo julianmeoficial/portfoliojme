@@ -102,9 +102,11 @@ See [I18N.md](I18N.md) for the full guide (adding keys, banner behaviour, rules)
 
 [`certificates.ts`](../src/data/certificates.ts) exports a typed `Certificate[]` array (empty until entries are added):
 
-- `id`, `title`, `issuer`, `category`, `pdf`, `verificationUrl`, optional `issuedAt`
+- `id`, `title`, `issuer`, `category`, `track`, `pdf`, `verificationUrl`, optional `issuedAt`
 - Optional specialization fields: `description` (Record ES/EN) and `courseCount` (e.g. Coursera specializations)
 - Categories: `coursera` | `aws` | `google` | `meta` | `other` — filter chips appear once entries exist
+- Tracks: `it` | `language` | `other` — internal deck sort only (IT → language → other, then newest `issuedAt`); not shown in the UI
+- `sortCertificates` / `filterCertificatesByCategory` always return the ordered list; source array order does not matter
 - PDFs live in `public/certificates/` (e.g. `/certificates/{id}.pdf`)
 - Metadata stays in `certificates.ts` — same split as screenshots vs `projects.ts`
 - UI: swipe deck in [`Certificates.tsx`](../src/components/sections/Certificates/Certificates.tsx) — each slide pairs metadata + PDF preview; category filters, click/drag navigation, dots, [`PdfLightbox`](../src/components/sections/Certificates/PdfLightbox.tsx) for expanded view; empty state when the array is empty

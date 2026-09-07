@@ -2,6 +2,19 @@
 
 Notable changes to this portfolio. For contribution workflow and conventions, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-09
+
+### Added
+
+- **Microsoft UX certificates** — `Fundamentals of UI/UX Design` and `Designing for User Experience` (Coursera / Microsoft) with PDFs, verification URLs, bilingual descriptions, and `issuedAt`.
+- **Certificate tracks (internal sort)** — Required `track` on each entry (`it` | `language` | `other`). Deck order is computed by `sortCertificates`: IT → language → other, then newest `issuedAt`, then `id`. Not exposed as UI filters or labels; visitors only swipe the ordered deck. New entries can be appended anywhere in the source array.
+
+### Changed
+
+- **Certificate docs** — `AGENTS.md`, `CONTRIBUTING.md`, and `ARCHITECTURE.md` require `track` and document the sort criteria.
+
+---
+
 ## 2026-08
 
 ### Fixed
