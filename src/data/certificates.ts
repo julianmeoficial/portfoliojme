@@ -108,6 +108,32 @@ export const certificates: Certificate[] = [
             en: 'Coursera course (Scrimba) on Supabase: project and table setup, SQL queries, UI integration, and real-time subscriptions to keep app data in sync.',
         },
     },
+    {
+        id: 'fundamentals-of-ui-ux-design',
+        title: 'Fundamentals of UI/UX Design',
+        issuer: 'Microsoft',
+        category: 'coursera',
+        pdf: '/certificates/fundamentals-of-ui-ux-design.pdf',
+        verificationUrl: 'https://coursera.org/verify/YF1GYHBZAI8T',
+        issuedAt: '2026-07',
+        description: {
+            es: 'Curso de Coursera (Microsoft) sobre fundamentos de UI/UX: diseño centrado en las personas, roles en un equipo de UX, design thinking y el inicio de un portafolio de casos.',
+            en: 'Coursera course (Microsoft) on UI/UX fundamentals: human-centered design, UX team roles, design thinking, and starting a case-study portfolio.',
+        },
+    },
+    {
+        id: 'designing-for-user-experience',
+        title: 'Designing for User Experience',
+        issuer: 'Microsoft',
+        category: 'coursera',
+        pdf: '/certificates/designing-for-user-experience.pdf',
+        verificationUrl: 'https://coursera.org/verify/QU11RZ60ZJ0L',
+        issuedAt: '2026-07',
+        description: {
+            es: 'Curso de Coursera (Microsoft) sobre diseño de experiencia de usuario: investigación y necesidades, ideación con design thinking, storyboards, flujos de usuario, journey maps y arquitectura de información.',
+            en: 'Coursera course (Microsoft) on user experience design: research and user needs, design-thinking ideation, storyboards, user flows, journey maps, and information architecture.',
+        },
+    },
 ];
 
 /** Categories that currently have at least one certificate. */
