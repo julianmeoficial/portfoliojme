@@ -130,8 +130,8 @@ const certificatesRaw: Certificate[] = [
         verificationUrl: 'https://coursera.org/verify/specialization/VW7VGZE1310G',
         issuedAt: '2026-07',
         description: {
-            es: 'Especialización de Coursera (UC Irvine) sobre gramática inglesa básica: formas de palabras, tiempos verbales y formación de preguntas.',
-            en: 'Coursera specialization (UC Irvine) on beginning English grammar: word forms, verb tenses, and question formation.',
+            es: 'Especialización de Coursera (UC Irvine) sobre gramática inglesa básica.',
+            en: 'Coursera specialization (UC Irvine) on beginning English grammar.',
         },
         courseCount: 3,
     },
@@ -145,8 +145,8 @@ const certificatesRaw: Certificate[] = [
         verificationUrl: 'https://coursera.org/verify/specialization/B3MB63MK1JVW',
         issuedAt: '2026-02',
         description: {
-            es: 'Especialización de Coursera (University at Buffalo) sobre la industria energética: sistemas eléctricos, gas natural, seguridad en utilities y el impacto de las renovables en la Smart Grid.',
-            en: 'Coursera specialization (University at Buffalo) on the energy industry: electric power systems, natural gas, utility safety, and the impact of renewables on the Smart Grid.',
+            es: 'Especialización de Coursera (University at Buffalo) sobre energía, utilities y Smart Grid.',
+            en: 'Coursera specialization (University at Buffalo) on energy systems, utilities, and the Smart Grid.',
         },
         courseCount: 4,
     },
@@ -160,8 +160,8 @@ const certificatesRaw: Certificate[] = [
         verificationUrl: 'https://coursera.org/share/e7eb86a09eea0956f717fb7d741df040',
         issuedAt: '2026-08',
         description: {
-            es: 'Curso de Coursera (Scrimba) sobre Supabase: creación de proyectos y tablas, consultas SQL, integración en la UI y suscripciones en tiempo real para mantener los datos sincronizados.',
-            en: 'Coursera course (Scrimba) on Supabase: project and table setup, SQL queries, UI integration, and real-time subscriptions to keep app data in sync.',
+            es: 'Curso de Coursera (Scrimba) sobre Supabase, SQL e integración en tiempo real.',
+            en: 'Coursera course (Scrimba) on Supabase, SQL, and real-time UI integration.',
         },
     },
     {
@@ -174,8 +174,8 @@ const certificatesRaw: Certificate[] = [
         verificationUrl: 'https://coursera.org/verify/YF1GYHBZAI8T',
         issuedAt: '2026-07',
         description: {
-            es: 'Curso de Coursera (Microsoft) sobre fundamentos de UI/UX: diseño centrado en las personas, roles en un equipo de UX, design thinking y el inicio de un portafolio de casos.',
-            en: 'Coursera course (Microsoft) on UI/UX fundamentals: human-centered design, UX team roles, design thinking, and starting a case-study portfolio.',
+            es: 'Curso de Coursera (Microsoft) sobre fundamentos de UI/UX y design thinking.',
+            en: 'Coursera course (Microsoft) on UI/UX fundamentals and design thinking.',
         },
     },
     {
@@ -188,8 +188,8 @@ const certificatesRaw: Certificate[] = [
         verificationUrl: 'https://coursera.org/verify/QU11RZ60ZJ0L',
         issuedAt: '2026-07',
         description: {
-            es: 'Curso de Coursera (Microsoft) sobre diseño de experiencia de usuario: investigación y necesidades, ideación con design thinking, storyboards, flujos de usuario, journey maps y arquitectura de información.',
-            en: 'Coursera course (Microsoft) on user experience design: research and user needs, design-thinking ideation, storyboards, user flows, journey maps, and information architecture.',
+            es: 'Curso de Coursera (Microsoft) sobre investigación UX, flujos de usuario y arquitectura de información.',
+            en: 'Coursera course (Microsoft) on UX research, user flows, and information architecture.',
         },
     },
     {
@@ -202,8 +202,8 @@ const certificatesRaw: Certificate[] = [
         verificationUrl: 'https://coursera.org/verify/JN2TBQUJXP2C',
         issuedAt: '2026-09',
         description: {
-            es: 'Curso de Coursera (IBM) sobre contenedores: imágenes Docker, orquestación con Kubernetes (pods, deployments, ReplicaSets), OpenShift y despliegue cloud-native.',
-            en: 'Coursera course (IBM) on containers: Docker images, Kubernetes orchestration (pods, deployments, ReplicaSets), OpenShift, and cloud-native deployment.',
+            es: 'Curso de Coursera (IBM) sobre contenedores con Docker, Kubernetes y OpenShift.',
+            en: 'Coursera course (IBM) on containers with Docker, Kubernetes, and OpenShift.',
         },
     },
 ];

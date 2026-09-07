@@ -14,6 +14,10 @@ Notable changes to this portfolio. For contribution workflow and conventions, se
 
 - **Certificate docs** — `AGENTS.md`, `CONTRIBUTING.md`, and `ARCHITECTURE.md` require `track` and document the sort criteria.
 
+### Fixed
+
+- **Certificate descriptions** — Removed CSS `-webkit-line-clamp` ellipsis on slide blurbs; shortened bilingual copy so full brief sentences show in ES and EN.
+
 ---
 
 ## 2026-08
